@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RCHU Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home2.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      .content {
+        text-align: center;
+      }
+      .content h1 {
+        margin-bottom: 20px;
+      }
+      .counter-container {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+      }
+      .counter {
+        width: 23%;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #cecece;
+        text-align: center;
+        margin: 10px;
+      }
+      .total-users {
+        background-color: #4caf50;
+        color: #fff;
+      }
+      .chart-container {
+        width: 80%;
+        margin: 20px auto;
+        display: none;
+      }
+      .chart-container.active {
+        display: block;
+      }
+      .toggle-dark-mode {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #4caf50;
+        color: #ffffff;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .toggle-dark-mode i {
+        font-size: 24px;
+      }
+      .cycle-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .cycle-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('rchuDashboard') }}" class="nav-link active"
+                ><i class="bx bx-home-alt icon"></i
+                ><span class="link">Dashboard</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('manage_rchu') }}" class="nav-link active"
+                ><i class="bx bx-user-circle icon"></i
+                ><span class="link">Manage RCHUs</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('rchuManageBHWs') }}" class="nav-link"
+                ><i class="bx bxs-user-detail icon"></i
+                ><span class="link">Manage BHWs</span></a
+              >
+            </li>
+            <li class="list">
+              <a
+                href="{{ url_for('rchuViewAllPredictions') }}"
+                class="nav-link active"
+                ><i class="bx bx-bar-chart-alt-2 icon"></i
+                ><span class="link">View Prediction Results</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('rchuLogout') }}" class="nav-link"
+                ><i class="bx bx-log-out icon"></i
+                ><span class="link">Log out</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <section class="overlay"></section>
+
+    <div class="content">
+      <h1>RHU Dashboard</h1>
+      <div class="counter-container">
+        <div class="counter total-users">
+          <h2>Total Users</h2>
+          <p>{{ total_users | default(0) }}</p>
+        </div>
+        <div class="counter">
+          <h2>Total BHWs</h2>
+          <p>{{ total_bhws | default(0) }}</p>
+        </div>
+        <div class="counter">
+          <h2>Total Children</h2>
+          <p>{{ total_children | default(0) }}</p>
+        </div>
+      </div>
+
+      <!-- Existing chart containers -->
+      <div class="chart-container" id="chart1">
+        <canvas id="malnutritionChart"></canvas>
+      </div>
+      <div class="chart-container" id="chart2">
+        <canvas id="ageChart"></canvas>
+      </div>
+      <div class="chart-container" id="chart3">
+        <canvas id="genderChart"></canvas>
+      </div>
+      <!-- New Barangay predictions chart container -->
+      <div class="chart-container" id="chart4">
+        <canvas id="barangayChart"></canvas>
+      </div>
+
+      <div class="cycle-buttons">
+        <button class="cycle-button" onclick="previousChart()">
+          Previous Chart
+        </button>
+        <button class="cycle-button" onclick="nextChart()">Next Chart</button>
+      </div>
+      <p id="chartDescription" style="text-align: center"></p>
+    </div>
+
+    <div class="toggle-dark-mode"><i class="bx bx-moon"></i></div>
+
+    <script>
+      const malnutritionMetrics = {{ malnutrition_metrics | tojson }};
+      const ageGroups = {{ age_groups | tojson }};
+      const genderCounts = {{ gender_counts | tojson }};
+      const barangayLabels = {{ barangay_labels | tojson }};
+      const barangayData = {{ barangay_data | tojson }};
+
+      const navBar = document.querySelector("nav"),
+            menuBtns = document.querySelectorAll(".menu-icon"),
+            overlay = document.querySelector(".overlay"),
+            toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+            toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      menuBtns.forEach(menuBtn => menuBtn.addEventListener("click", () => navBar.classList.toggle("open")));
+      overlay.addEventListener("click", () => navBar.classList.remove("open"));
+
+      function setDarkMode(isDark) {
+          document.body.classList.toggle("dark-mode", isDark);
+          navBar.classList.toggle("dark-mode", isDark);
+          document.querySelector(".content").classList.toggle("dark-mode", isDark);
+          localStorage.setItem("darkMode", isDark);
+          toggleDarkModeIcon.classList.toggle("bx-sun", isDark);
+          toggleDarkModeIcon.classList.toggle("bx-moon", !isDark);
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () => setDarkMode(!document.body.classList.contains("dark-mode")));
+      if (localStorage.getItem("darkMode") === "true") setDarkMode(true);
+
+      const orderedAgeLabels = ["0-5", "6-12", "13-18", "19-50", "50+"];
+      const orderedAgeData = orderedAgeLabels.map(label => ageGroups[label]);
+
+      const orderedGenderLabels = ["M", "F", "Other"];
+      const orderedGenderData = orderedGenderLabels.map(label => genderCounts[label]);
+
+      const charts = [
+          {
+              ctx: document.getElementById("malnutritionChart").getContext("2d"),
+              config: {
+                  type: "bar",
+                  data: {
+                      labels: [
+                          "Severely Underweight", "Underweight", "Normal", "Overweight",
+                          "Severely Stunted", "Stunted", "Normal", "Tall",
+                          "Severely Wasted", "Wasted", "Normal", "Overweight", "Obese"
+                      ],
+                      datasets: [
+                          {
+                              label: "Weight for Age",
+                              backgroundColor: "#4caf50",
+                              data: [
+                                  malnutritionMetrics["Weight for Age"]["Severely Underweight"] || 0,
+                                  malnutritionMetrics["Weight for Age"]["Underweight"] || 0,
+                                  malnutritionMetrics["Weight for Age"]["Normal"] || 0,
+                                  malnutritionMetrics["Weight for Age"]["Overweight"] || 0
+                              ]
+                          },
+                          {
+                              label: "Height for Age",
+                              backgroundColor: "#2196f3",
+                              data: [
+                                  malnutritionMetrics["Height for Age"]["Severely Stunted"] || 0,
+                                  malnutritionMetrics["Height for Age"]["Stunted"] || 0,
+                                  malnutritionMetrics["Height for Age"]["Normal"] || 0,
+                                  malnutritionMetrics["Height for Age"]["Tall"] || 0
+                              ]
+                          },
+                          {
+                              label: "Weight for Length/Height",
+                              backgroundColor: "#ff5722",
+                              data: [
+                                  malnutritionMetrics["Weight for Length/Height"]["Severely Wasted"] || 0,
+                                  malnutritionMetrics["Weight for Length/Height"]["Wasted"] || 0,
+                                  malnutritionMetrics["Weight for Length/Height"]["Normal"] || 0,
+                                  malnutritionMetrics["Weight for Length/Height"]["Overweight"] || 0,
+                                  malnutritionMetrics["Weight for Length/Height"]["Obese"] || 0
+                              ]
+                          }
+                      ]
+                  },
+                  options: {
+                      scales: {
+                          x: { ticks: { autoSkip: false } },
+                          y: { beginAtZero: true }
+                      },
+                      responsive: true
+                  }
+              },
+              description: "Malnutrition Metrics (Weight for Age, Height for Age, Weight for Length/Height)"
+          },
+          {
+              ctx: document.getElementById("ageChart").getContext("2d"),
+              config: {
+                  type: "bar",
+                  data: {
+                      labels: orderedAgeLabels,
+                      datasets: [{ label: "Age Groups", backgroundColor: "#4caf50", data: orderedAgeData }]
+                  },
+                  options: { scales: { y: { beginAtZero: true } } }
+              },
+              description: "Age Distribution of Users"
+          },
+          {
+              ctx: document.getElementById("genderChart").getContext("2d"),
+              config: {
+                  type: "pie",
+                  data: {
+                      labels: orderedGenderLabels,
+                      datasets: [{ label: "Gender", backgroundColor: ["#4caf50", "#2196f3", "#ff5722"], data: orderedGenderData }]
+                  },
+                  options: { responsive: true, plugins: { legend: { position: 'top' } } }
+              },
+              description: "Gender Distribution of Users"
+          },
+          {
+              ctx: document.getElementById("barangayChart").getContext("2d"),
+              config: {
+                  type: "bar",
+                  data: { labels: barangayLabels, datasets: [{ label: "Predictions per Barangay", backgroundColor: "#3e95cd", data: barangayData }] },
+                  options: { scales: { y: { beginAtZero: true } } }
+              },
+              description: "Predictions by Barangay"
+          }
+      ];
+
+      let chartIndex = 0;
+
+      function renderChart(index) {
+          charts.forEach((chart, i) => document.getElementById(`chart${i + 1}`).classList.toggle("active", i === index));
+          const { ctx, config, description } = charts[index];
+          document.getElementById("chartDescription").textContent = description;
+          if (!charts[index].instance) charts[index].instance = new Chart(ctx, config);
+      }
+
+      function previousChart() {
+          chartIndex = (chartIndex - 1 + charts.length) % charts.length;
+          renderChart(chartIndex);
+      }
+
+      function nextChart() {
+          chartIndex = (chartIndex + 1) % charts.length;
+          renderChart(chartIndex);
+      }
+
+      renderChart(chartIndex);
+    </script>
+  </body>
+</html>

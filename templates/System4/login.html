@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <style>
+      /* Modal Overlay */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        overflow-y: auto; /* Enable scrolling on smaller screens */
+      }
+
+      /* Modal Content Box */
+      .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 20px;
+        width: 90%;
+        max-width: 900px; /* Increase max width for a wider modal */
+        max-height: 70vh; /* Set max height to 70% of viewport height */
+        overflow-y: auto; /* Enable scroll inside the modal if needed */
+        border-radius: 8px;
+        text-align: left;
+      }
+
+      /* Modal Header */
+      .modal-header h2 {
+        margin-top: 0;
+        font-size: 1.25em;
+        font-weight: bold;
+      }
+
+      /* Modal Body */
+      .modal-body {
+        margin-top: 15px;
+        font-size: 0.9em;
+      }
+
+      /* Modal Footer */
+      .modal-footer {
+        text-align: right;
+        margin-top: 20px;
+      }
+
+      /* Agree Button */
+      .agree-button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .agree-button:hover {
+        background-color: #45a049;
+      }
+      .logo img {
+        width: 150px;
+        height: 150px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo">
+        <img
+          src="{{ url_for('static', filename='pics/mmis-logo.png') }}"
+          alt="MMIS Logo"
+        />
+      </div>
+      <h2>LOGIN</h2>
+      <form
+        action="{{ url_for('userIndex') }}"
+        method="POST"
+        onsubmit="event.preventDefault(); showPrivacyModal();"
+      >
+        <div class="input-group">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Username"
+            required
+          />
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      <p class="register-link">Back to <a href="/">Menu</a></p>
+    </div>
+
+    <!-- Data Privacy Agreement Modal -->
+    <div id="privacyModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Data Privacy Agreement</h2>
+          <p>(Please read and agree to the terms to proceed)</p>
+        </div>
+        <div class="modal-body">
+          <p>
+            In accordance with the Data Privacy Act of 2012 (RA 10173), I hereby
+            consent to the collection, use, processing, and disclosure of my
+            personal data:
+          </p>
+          <h3>Personal Data Collection and Use</h3>
+          <p>
+            I understand that MMS collects and processes the following personal
+            data:
+          </p>
+          <ul>
+            <li>My child's demographic profile</li>
+            <li>Health and nutrition data</li>
+            <li>Maternal/household data</li>
+            <li>Socioeconomic and environmental data</li>
+          </ul>
+          <h3>Consent to Data Processing</h3>
+          <p>
+            I grant MMS permission to collect, use, record, disclose, transfer,
+            store, organize, update, monitor, and process my personal
+            information.
+          </p>
+          <h3>Purpose and Scope</h3>
+          <p>
+            MMS will use my personal data solely for research, healthcare
+            services, and program evaluation.
+          </p>
+          <h3>Rights and Responsibilities</h3>
+          <p>I understand my rights under the Data Privacy Act, including:</p>
+          <ul>
+            <li>Access to my personal data</li>
+            <li>Correction or updating of inaccurate data</li>
+            <li>Deletion or blocking of unnecessary data</li>
+            <li>Right to object to processing</li>
+          </ul>
+          <p>
+            By clicking "Agree and Continue", I acknowledge that I have read,
+            understood, and consented to the terms of this Data Privacy
+            Agreement.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="agree-button" onclick="submitLogin()">
+            Agree and Continue
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Function to display the Privacy Agreement modal
+      function showPrivacyModal() {
+        document.getElementById("privacyModal").style.display = "block";
+      }
+
+      // Function to handle login submission after agreeing
+      function submitLogin() {
+        document.getElementById("privacyModal").style.display = "none";
+        // Submit the form after consent
+        document.querySelector("form").submit();
+      }
+
+      // Close the modal if user clicks outside it
+      window.onclick = function (event) {
+        const modal = document.getElementById("privacyModal");
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      };
+    </script>
+  </body>
+</html>

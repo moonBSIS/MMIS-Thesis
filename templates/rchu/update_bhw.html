@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update BHW</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home2.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      .form-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .form-group button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .form-group button:hover {
+        background-color: #45a049;
+      }
+
+      /* Dark mode styles */
+      body.dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+
+      .form-container.dark-mode {
+        background-color: #1e1e1e;
+        border-color: #333;
+      }
+
+      .form-container h1.dark-mode {
+        color: #ffffff;
+      }
+
+      .form-group input.dark-mode,
+      .form-group select.dark-mode {
+        background-color: #333;
+        color: #ffffff;
+        border-color: #444;
+      }
+
+      .form-group button.dark-mode {
+        background-color: #ffa500;
+        color: #333;
+      }
+
+      .form-group button.dark-mode:hover {
+        background-color: #ff8c00;
+      }
+
+      .toggle-dark-mode {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #4caf50;
+        color: #ffffff;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .toggle-dark-mode i {
+        font-size: 24px;
+      }
+
+      body.dark-mode .toggle-dark-mode {
+        background-color: #ffa500;
+      }
+
+      body.dark-mode .toggle-dark-mode:hover {
+        background-color: #ff8c00;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('rchuDashboard') }}" class="nav-link active"
+                ><i class="bx bx-home-alt icon"></i
+                ><span class="link">Dashboard</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('manage_rchu') }}" class="nav-link active"
+                ><i class="bx bx-user-circle icon"></i
+                ><span class="link">Manage RCHUs</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('rchuManageBHWs') }}" class="nav-link"
+                ><i class="bx bxs-user-detail icon"></i
+                ><span class="link">Manage BHWs</span></a
+              >
+            </li>
+            <li class="list">
+              <a
+                href="{{ url_for('rchuViewAllPredictions') }}"
+                class="nav-link active"
+                ><i class="bx bx-bar-chart-alt-2 icon"></i
+                ><span class="link">View Prediction Results</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('rchuLogout') }}" class="nav-link"
+                ><i class="bx bx-log-out icon"></i
+                ><span class="link">Log out</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="form-container">
+      <h1 class="dark-mode-toggle">Update BHW Account</h1>
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          {{ form.username.label }}<br />
+          {{ form.username(class_="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.password.label }}<br />
+          {{ form.password(class_="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.barangay.label }}<br />
+          {{ form.barangay(class_="form-control") }}
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary dark-mode-toggle">
+            Update BHW
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="toggle-dark-mode">
+      <i class="bx bx-moon"></i>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuIcon = document.querySelector(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      menuIcon.addEventListener("click", () => {
+        navBar.classList.toggle("open");
+        overlay.classList.toggle("open");
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+        overlay.classList.remove("open");
+      });
+
+      function setDarkMode(isDark) {
+        if (isDark) {
+          document.body.classList.add("dark-mode");
+          document.querySelector("nav").classList.add("dark-mode");
+          document.querySelector(".sidebar").classList.add("dark-mode");
+          document.querySelector(".form-container").classList.add("dark-mode");
+          document
+            .querySelectorAll(".dark-mode-toggle")
+            .forEach((el) => el.classList.add("dark-mode"));
+          localStorage.setItem("darkMode", "true");
+          toggleDarkModeIcon.classList.replace("bx-moon", "bx-sun");
+        } else {
+          document.body.classList.remove("dark-mode");
+          document.querySelector("nav").classList.remove("dark-mode");
+          document.querySelector(".sidebar").classList.remove("dark-mode");
+          document
+            .querySelector(".form-container")
+            .classList.remove("dark-mode");
+          document
+            .querySelectorAll(".dark-mode-toggle")
+            .forEach((el) => el.classList.remove("dark-mode"));
+          localStorage.setItem("darkMode", "false");
+          toggleDarkModeIcon.classList.replace("bx-sun", "bx-moon");
+        }
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () => {
+        const isDark = document.body.classList.contains("dark-mode");
+        setDarkMode(!isDark);
+      });
+
+      if (localStorage.getItem("darkMode") === "true") {
+        setDarkMode(true);
+      }
+    </script>
+  </body>
+</html>

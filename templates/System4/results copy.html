@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediction Result</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/record.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('userDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#" class="nav-link submenu-toggle">
+                <i class="bx bx-folder-open icon"></i>
+                <span class="link">Add New Record</span>
+                <i class="bx bx-chevron-down arrow"></i>
+              </a>
+              <ul class="submenu">
+                <li><a href="{{ url_for('add_child') }}">Child Data</a></li>
+                <li>
+                  <a href="{{ url_for('add_household') }}"
+                    >Maternal/Household Data</a
+                  >
+                </li>
+              </ul>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('predict') }}" class="nav-link">
+                <i class="bx bx-spreadsheet icon"></i>
+                <span class="link">Predict</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('results') }}" class="nav-link">
+                <i class="bx bx-bar-chart-alt-2 icon"></i>
+                <span class="link">Results</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('about') }}" class="nav-link">
+                <i class="bx bx-cog icon"></i>
+                <span class="link">About</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('userLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="container">
+      <h2>Prediction Result</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Age in months</td>
+            <td>{{ age }}</td>
+          </tr>
+          <tr>
+            <td>Sex</td>
+            <td>{{ sex }}</td>
+          </tr>
+          <tr>
+            <td>Vitamin A</td>
+            <td>{{ vitamin_a }}</td>
+          </tr>
+          <tr>
+            <td>Birth Order</td>
+            <td>{{ birth_order }}</td>
+          </tr>
+          <tr>
+            <td>Breastfeeding</td>
+            <td>{{ breastfeeding }}</td>
+          </tr>
+          <tr>
+            <td>Comorbidity Status</td>
+            <td>{{ comorbidity_status }}</td>
+          </tr>
+          <tr>
+            <td>Type of Birth</td>
+            <td>{{ type_of_birth }}</td>
+          </tr>
+          <tr>
+            <td>Dietary Diversity Score</td>
+            <td>{{ dietary_diversity_score }}</td>
+          </tr>
+          <tr>
+            <td>Mother's Age</td>
+            <td>{{ mothers_age }}</td>
+          </tr>
+          <tr>
+            <td>Residence</td>
+            <td>{{ residence }}</td>
+          </tr>
+          <tr>
+            <td>Mother's Education Level</td>
+            <td>{{ mothers_education_level }}</td>
+          </tr>
+          <tr>
+            <td>Father's Education Level</td>
+            <td>{{ fathers_education_level }}</td>
+          </tr>
+          <tr>
+            <td>Women's Autonomy Tertiles</td>
+            <td>{{ womens_autonomy_tertiles }}</td>
+          </tr>
+          <tr>
+            <td>Toilet Facility</td>
+            <td>{{ toilet_facility }}</td>
+          </tr>
+          <tr>
+            <td>Source of Drinking Water</td>
+            <td>{{ drinking_water_source }}</td>
+          </tr>
+          <tr>
+            <td>BMI of Mother</td>
+            <td>{{ bmi_of_mother }}</td>
+          </tr>
+          <tr>
+            <td>Number of Children Under Five</td>
+            <td>{{ number_of_children_under_five }}</td>
+          </tr>
+          <tr>
+            <td>Media Exposure</td>
+            <td>{{ media_exposure }}</td>
+          </tr>
+          <tr>
+            <td>Mother's Working Status</td>
+            <td>{{ mothers_working_status }}</td>
+          </tr>
+          <tr>
+            <td>Household Size</td>
+            <td>{{ household_size }}</td>
+          </tr>
+          <tr>
+            <td>Wealth Quantile</td>
+            <td>{{ wealth_quantile }}</td>
+          </tr>
+          <tr>
+            <td>Prediction Result</td>
+            <td>{{ result }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <a href="{{ url_for('userDashboard') }}" class="btn btn-primary"
+        >Back to Dashboard</a
+      >
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        submenuToggles = document.querySelectorAll(".submenu-toggle");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      submenuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          const submenu = toggle.nextElementSibling;
+          submenu.classList.toggle("open");
+          toggle.querySelector(".arrow").classList.toggle("open");
+        });
+      });
+
+      window.addEventListener("load", () => {
+        const url = window.location.href;
+        if (url.includes("add_child")) {
+          document.getElementById("parent-data-form").style.display = "block";
+        } else {
+          document.getElementById("parent-data-form").style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

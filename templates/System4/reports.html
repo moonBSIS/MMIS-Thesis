@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="css/record.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="home.html" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#" class="nav-link submenu-toggle">
+                <i class="bx bx-folder-open icon"></i>
+                <span class="link">Add New Record</span>
+                <i class="bx bx-chevron-down arrow"></i>
+              </a>
+              <ul class="submenu">
+                <li><a href="precord.html">Child Data</a></li>
+                <li><a href="crecord.html">Maternal/Household Data</a></li>
+              </ul>
+            </li>
+            <li class="list">
+              <a href="opt.html" class="nav-link">
+                <i class="bx bx-spreadsheet icon"></i>
+                <span class="link">e-OPT</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="reports.html" class="nav-link">
+                <i class="bx bx-bar-chart-alt-2 icon"></i>
+                <span class="link">Reports</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="about.html" class="nav-link">
+                <i class="bx bx-cog icon"></i>
+                <span class="link">About</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="logout.html" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        submenuToggles = document.querySelectorAll(".submenu-toggle"),
+        parentDataForm = document.getElementById("parent-data-form");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      submenuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          const submenu = toggle.nextElementSibling;
+          submenu.classList.toggle("open");
+          toggle.querySelector(".arrow").classList.toggle("open");
+          if (submenu.classList.contains("open")) {
+            parentDataForm.style.display = "block";
+          } else {
+            parentDataForm.style.display = "none";
+          }
+        });
+      });
+
+      // Ensure the submenu is open when the page loads if the user navigates directly to the form
+      window.addEventListener("load", () => {
+        const url = window.location.href;
+        if (url.includes("precord.html") || url.includes("crecord.html")) {
+          const submenu = document.querySelector(".submenu");
+          const arrow = document.querySelector(".submenu-toggle .arrow");
+          submenu.classList.add("open");
+          arrow.classList.add("open");
+          parentDataForm.style.display = "block";
+        } else {
+          parentDataForm.style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

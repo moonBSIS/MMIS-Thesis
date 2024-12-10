@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/record.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Additional CSS for dark mode */
+      body.dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+
+      nav.dark-mode {
+        background-color: #1e1e1e;
+      }
+
+      .about-container.dark-mode {
+        background-color: #1e1e1e;
+        box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+      }
+
+      .about-content.dark-mode {
+        color: #ffffff;
+      }
+
+      .toggle-dark-mode {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #4caf50;
+        color: #ffffff;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .toggle-dark-mode i {
+        font-size: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('userDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('viewProfile') }}" class="nav-link">
+                <i class="bx bx-user-circle icon"></i>
+                <span class="link">View Profile</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('about') }}" class="nav-link">
+                <i class="bx bx-cog icon"></i>
+                <span class="link">About Us</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('userLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="about-container">
+      <div class="about-image">
+        <img
+          src="{{ url_for('static', filename='pics/children.png') }}"
+          alt="Children"
+        />
+      </div>
+      <div class="about-content">
+        <h2>About the team</h2>
+        <p>
+          "Malnutrition Monitoring System was designed to predict risk levels
+          and provide tailored dietary recommendations. Developed by BSIS
+          students, this system aims to streamline malnutrition management with
+          user-friendly features and actionable insights. Join us in our
+          commitment to improving nutritional outcomes and promoting healthier
+          lives for all."
+        </p>
+      </div>
+    </div>
+
+    <div class="toggle-dark-mode">
+      <i class="bx bx-moon"></i>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        submenuToggles = document.querySelectorAll(".submenu-toggle"),
+        toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      submenuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          const submenu = toggle.nextElementSibling;
+          submenu.classList.toggle("open");
+          toggle.querySelector(".arrow").classList.toggle("open");
+        });
+      });
+
+      function setDarkMode(isDark) {
+        if (isDark) {
+          document.body.classList.add("dark-mode");
+          document.querySelector("nav").classList.add("dark-mode");
+          document.querySelector(".about-container").classList.add("dark-mode");
+          document.querySelector(".about-content").classList.add("dark-mode");
+          localStorage.setItem("darkMode", "true");
+          toggleDarkModeIcon.classList.replace("bx-moon", "bx-sun");
+        } else {
+          document.body.classList.remove("dark-mode");
+          document.querySelector("nav").classList.remove("dark-mode");
+          document
+            .querySelector(".about-container")
+            .classList.remove("dark-mode");
+          document
+            .querySelector(".about-content")
+            .classList.remove("dark-mode");
+          localStorage.setItem("darkMode", "false");
+          toggleDarkModeIcon.classList.replace("bx-sun", "bx-moon");
+        }
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () => {
+        const isDark = document.body.classList.contains("dark-mode");
+        setDarkMode(!isDark);
+      });
+
+      // Initialize dark mode based on user's preference
+      if (localStorage.getItem("darkMode") === "true") {
+        setDarkMode(true);
+      }
+    </script>
+  </body>
+</html>

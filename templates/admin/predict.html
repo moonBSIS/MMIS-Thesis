@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Predict</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/record2.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Legend Styles */
+      .legend {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+
+      .legend h3 {
+        margin-bottom: 10px;
+        font-size: 18px;
+        color: #333;
+      }
+
+      .legend p {
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+
+      .legend ul {
+        margin-left: 20px;
+        list-style-type: none;
+        padding-left: 0;
+      }
+
+      .legend ul li {
+        margin-bottom: 10px;
+      }
+
+      .legend ul li strong {
+        display: inline-block;
+        width: 150px;
+      }
+
+      /* Dark mode styles */
+      body.dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+
+      nav.dark-mode {
+        background-color: #1e1e1e;
+      }
+
+      nav .logo .menu-icon,
+      nav .logo .logo-name {
+        color: #fff;
+      }
+
+      nav .logo .menu-icon:hover {
+        color: #c9c7c7;
+      }
+
+      nav .logo .sd {
+        color: #ddd;
+      }
+
+      .sidebar.dark-mode {
+        background-color: #1e1e1e;
+      }
+
+      .legend.dark-mode {
+        background-color: #1e1e1e;
+        border-color: #333;
+      }
+
+      .legend h3.dark-mode,
+      .legend p.dark-mode {
+        color: #ffffff;
+      }
+
+      .legend ul li.dark-mode {
+        color: #ffffff;
+      }
+
+      /* Form and Profile Form Styles */
+      .profile-form {
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+
+      body.dark-mode .profile-form {
+        background-color: #333;
+        color: #fff;
+      }
+
+      body.dark-mode .profile-form input,
+      body.dark-mode .profile-form select,
+      body.dark-mode .profile-form textarea {
+        background-color: #444;
+        color: #fff;
+        border-color: #555;
+      }
+
+      body.dark-mode .profile-form label {
+        color: #fff;
+      }
+
+      body.dark-mode nav .logname {
+        color: #fff;
+      }
+
+      /* Dark Mode Toggle */
+      .toggle-dark-mode {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #4caf50;
+        color: #ffffff;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      body.dark-mode .toggle-dark-mode {
+        background-color: #ffa500;
+      }
+
+      body.dark-mode .toggle-dark-mode:hover {
+        background-color: #ff8c00;
+      }
+
+      body.dark-mode h3.pd {
+        color: #90ee90;
+      }
+
+      .save-btn {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon sd"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('adminDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('adminUserProfiles') }}" class="nav-link">
+                <i class="bx bx-user-circle icon"></i>
+                <span class="link">User Profiles</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('view_all_children') }}" class="nav-link">
+                <i class="bx bx-file icon"></i>
+                <span class="link">View All Records</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('adminLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="profile-form" id="predict-form">
+      <h3 class="dark-mode-toggle pd">Predict Malnutrition Risk</h3>
+      <form
+        id="predict-form1"
+        class="form-grid"
+        method="POST"
+        action="{{ url_for('adminPredict', child_id=child.id) }}"
+      >
+        {{ form.hidden_tag() }}
+
+        <!-- Hidden field for child_id -->
+        <input type="hidden" name="child_id" value="{{ child.id }}" />
+
+        <div class="form-group">
+          {{ form.child_first_name.label }}<br />
+          {{ form.child_first_name(class="form-control", value=child.first_name
+          if child else '') }}
+        </div>
+        <div class="form-group">
+          {{ form.child_last_name.label }}<br />
+          {{ form.child_last_name(class="form-control", value=child.last_name if
+          child else '') }}
+        </div>
+        <div class="form-group">
+          {{ form.age.label }}<br />
+          {{ form.age(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.sex.label }}<br />
+          {{ form.sex(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.vitamin_a.label }}<br />
+          {{ form.vitamin_a(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.birth_order.label }}<br />
+          {{ form.birth_order(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.breastfeeding.label }}<br />
+          {{ form.breastfeeding(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.comorbidity_status.label }}<br />
+          {{ form.comorbidity_status(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.type_of_birth.label }}<br />
+          {{ form.type_of_birth(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.size_at_birth.label }}<br />
+          {{ form.size_at_birth(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.dietary_diversity_score.label }}<br />
+          {{ form.dietary_diversity_score(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.mothers_age.label }}<br />
+          {{ form.mothers_age(class="form-control", value=household.mother_age
+          if household else '') }}
+        </div>
+        <div class="form-group">
+          {{ form.residence.label }}<br />
+          {{ form.residence(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.mothers_education_level.label }}<br />
+          {{ form.mothers_education_level(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.fathers_education_level.label }}<br />
+          {{ form.fathers_education_level(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.womens_autonomy_tertiles.label }}<br />
+          {{ form.womens_autonomy_tertiles(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.toilet_facility.label }}<br />
+          {{ form.toilet_facility(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.source_of_drinking_water.label }}<br />
+          {{ form.source_of_drinking_water(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.bmi_of_mother.label }}<br />
+          {{ form.bmi_of_mother(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.number_of_children_under_five.label }}<br />
+          {{ form.number_of_children_under_five(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.mothers_working_status.label }}<br />
+          {{ form.mothers_working_status(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.household_size.label }}<br />
+          {{ form.household_size(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.wealth_quantile.label }}<br />
+          {{ form.wealth_quantile(class="form-control") }}
+        </div>
+      </form>
+      {% if not child.predictions %}
+      <button type="submit" form="predict-form1" class="save-btn">
+        Submit
+      </button>
+      {% endif %} {% if child.predictions %}
+      <button type="submit" form="predict-form1" class="save-btn">
+        Update
+      </button>
+      {% endif %}
+      <a
+        href="{{ url_for('bhw_manage_child', user_id=child.user_id) }}"
+        class="back-button dark-mode-toggle"
+        >Back</a
+      >
+
+      <!-- Wealth Quantile Legend -->
+      <div class="legend dark-mode-toggle">
+        <h3 class="dark-mode-toggle">Philippine Income Classes</h3>
+        <p class="dark-mode-toggle">
+          by Philippine Institute of Development Studies 2024
+        </p>
+        <ul>
+          <li><strong>Poor:</strong> ₱0 - ₱9,520</li>
+          <li><strong>Low Income:</strong> ₱9,520 - ₱19,040</li>
+          <li><strong>Low Middle Income:</strong> ₱19,040 - ₱38,080</li>
+          <li><strong>Middle Income:</strong> ₱38,080 - ₱66,640</li>
+          <li><strong>Upper Middle Income:</strong> ₱66,640 - ₱114,240</li>
+          <li><strong>Upper Income:</strong> ₱114,240 - ₱190,400</li>
+          <li><strong>Rich:</strong> ₱190,400 and above</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="toggle-dark-mode">
+      <i class="bx bx-moon"></i>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        submenuToggles = document.querySelectorAll(".submenu-toggle"),
+        toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      submenuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          const submenu = toggle.nextElementSibling;
+          submenu.classList.toggle("open");
+          toggle.querySelector(".arrow").classList.toggle("open");
+        });
+      });
+
+      function setDarkMode(isDark) {
+        const elementsToToggle = [
+          document.body,
+          document.querySelector("nav"),
+          document.querySelector(".sidebar"),
+          ...document.querySelectorAll(".dark-mode-toggle"),
+          ...document.querySelectorAll("form input"),
+          ...document.querySelectorAll("form select"),
+          ...document.querySelectorAll("form textarea"),
+          document.querySelector(".profile-form"),
+          document.querySelector(".legend"),
+        ];
+
+        elementsToToggle.forEach((el) => {
+          if (el) {
+            if (isDark) {
+              el.classList.add("dark-mode");
+            } else {
+              el.classList.remove("dark-mode");
+            }
+          }
+        });
+
+        if (isDark) {
+          localStorage.setItem("darkMode", "true");
+          toggleDarkModeIcon.classList.replace("bx-moon", "bx-sun");
+        } else {
+          localStorage.setItem("darkMode", "false");
+          toggleDarkModeIcon.classList.replace("bx-sun", "bx-moon");
+        }
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () => {
+        const isDark = document.body.classList.contains("dark-mode");
+        setDarkMode(!isDark);
+      });
+
+      const isDarkModeEnabled = localStorage.getItem("darkMode") === "true";
+      setDarkMode(isDarkModeEnabled);
+    </script>
+  </body>
+</html>

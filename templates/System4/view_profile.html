@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/record2.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .back-button,
+      .save-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .back-button {
+        background-color: #007bff;
+        width: 100%;
+      }
+      .back-button:hover {
+        background-color: #0056b3;
+      }
+      .button-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      /* Dark mode styles */
+      body.dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+
+      nav.dark-mode {
+        background-color: #1e1e1e;
+      }
+
+      nav .logo .menu-icon,
+      nav .logo .logo-name,
+      nav .logo .logname {
+        color: #fff; /* Light text color */
+      }
+
+      nav .logo .menu-icon:hover,
+      nav .logo .logo-name:hover,
+      nav .logo .logname {
+        color: #ddd; /* Slightly lighter color on hover */
+      }
+
+      .sidebar.dark-mode {
+        background-color: #1e1e1e;
+      }
+
+      .profile-form.dark-mode {
+        background-color: #1e1e1e;
+      }
+
+      .back-button.dark-mode {
+        background-color: #ffa500;
+        color: #333;
+      }
+
+      .toggle-dark-mode {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #4caf50;
+        color: #ffffff;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .toggle-dark-mode i {
+        font-size: 24px;
+      }
+
+      body.dark-mode .toggle-dark-mode {
+        background-color: #ffa500; /* Change background color to orange in dark mode */
+      }
+
+      body.dark-mode .toggle-dark-mode:hover {
+        background-color: #ff8c00;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('userDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('viewProfile') }}" class="nav-link">
+                <i class="bx bx-user-circle icon"></i>
+                <span class="link">View Profile</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('about') }}" class="nav-link">
+                <i class="bx bx-cog icon"></i>
+                <span class="link">About Us</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('userLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="profile-form" id="view-profile-form">
+      <h3>View Profile</h3>
+      <form
+        class="form-grid"
+        method="POST"
+        action="{{ url_for('viewProfile') }}"
+        id="profileForm"
+      >
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          {{ form.mother_first_name.label }}<br />
+          {{ form.mother_first_name(class="form-control", readonly=True) }}
+        </div>
+        <div class="form-group">
+          {{ form.mother_last_name.label }}<br />
+          {{ form.mother_last_name(class="form-control", readonly=True) }}
+        </div>
+        <div class="form-group">
+          {{ form.father_first_name.label }}<br />
+          {{ form.father_first_name(class="form-control", readonly=True) }}
+        </div>
+        <div class="form-group">
+          {{ form.father_last_name.label }}<br />
+          {{ form.father_last_name(class="form-control", readonly=True) }}
+        </div>
+        <div class="form-group">
+          <label>Mother's Age</label><br />
+          <input
+            type="text"
+            class="form-control"
+            value="{{ mother_age }} years"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label>Father's Age</label><br />
+          <input
+            type="text"
+            class="form-control"
+            value="{{ father_age }} years"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          {{ form.address.label }}<br />
+          {{ form.address(class="form-control", readonly=True) }}
+        </div>
+      </form>
+      <div class="button-container">
+        <a href="{{ url_for('userDashboard') }}" class="back-button">Back</a>
+      </div>
+    </div>
+
+    <div class="toggle-dark-mode">
+      <i class="bx bx-moon"></i>
+    </div>
+
+    <script>
+      const toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      function updateDarkModeIcon(isDark) {
+        if (isDark) {
+          toggleDarkModeIcon.classList.replace("bx-moon", "bx-sun");
+        } else {
+          toggleDarkModeIcon.classList.replace("bx-sun", "bx-moon");
+        }
+      }
+
+      function setDarkMode(isDark) {
+        document.body.classList.toggle("dark-mode", isDark);
+        document.querySelector("nav").classList.toggle("dark-mode", isDark);
+        document
+          .querySelector(".sidebar")
+          .classList.toggle("dark-mode", isDark);
+        document
+          .querySelector(".profile-form")
+          .classList.toggle("dark-mode", isDark);
+        document
+          .querySelectorAll(".back-button")
+          .forEach((btn) => btn.classList.toggle("dark-mode", isDark));
+        localStorage.setItem("darkMode", isDark ? "true" : "false");
+        updateDarkModeIcon(isDark);
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () => {
+        const isDark = !document.body.classList.contains("dark-mode");
+        setDarkMode(isDark);
+      });
+
+      // Initialize dark mode based on user's preference
+      const isDarkModeEnabled = localStorage.getItem("darkMode") === "true";
+      setDarkMode(isDarkModeEnabled);
+
+      // Sidebar and Menu Script
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        submenuToggles = document.querySelectorAll(".submenu-toggle");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      submenuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          const submenu = toggle.nextElementSibling;
+          submenu.classList.toggle("open");
+          toggle.querySelector(".arrow").classList.toggle("open");
+        });
+      });
+    </script>
+  </body>
+</html>

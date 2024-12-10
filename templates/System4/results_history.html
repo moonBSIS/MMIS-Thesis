@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediction History</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/results.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .food-recommendations {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      body.dark-mode .food-recommendations {
+        background-color: #333;
+        color: #fff;
+        border-color: #555;
+      }
+      .back-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      body.dark-mode .back-button {
+        background-color: #0056b3;
+      }
+      .dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+      nav.dark-mode,
+      .sidebar.dark-mode {
+        background-color: #1e1e1e;
+      }
+      .dark-mode h4,
+      .dark-mode p {
+        color: #ffffff;
+      }
+      .result-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      .result-table th,
+      .result-table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+      .result-table th {
+        background-color: #4caf50;
+        font-weight: bold;
+      }
+      .view-btn {
+        padding: 6px 12px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      .view-btn:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('userDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('userLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="result-container">
+      <h3>
+        Prediction History for {{ child.first_name }} {{ child.last_name }}
+      </h3>
+
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Risk Level</th>
+            <th>Age (months)</th>
+            <th>Comorbidity Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prediction in predictions %}
+          <tr>
+            <td>{{ prediction.prediction_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ prediction.prediction_result|safe }}</td>
+            <td>{{ prediction.age }}</td>
+            <td>{{ prediction.comorbidity_status }}</td>
+            <td>
+              <a
+                href="{{ url_for('userViewResults', prediction_id=prediction.id) }}"
+                class="view-btn"
+                >View</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <button onclick="window.history.back();" class="back-button">Back</button>
+    </div>
+
+    <div class="toggle-dark-mode">
+      <i class="bx bx-moon"></i>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuIcon = document.querySelector(".menu-icon"),
+        sidebar = document.querySelector(".sidebar"),
+        overlay = document.querySelector(".overlay"),
+        toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      menuIcon.addEventListener("click", () => {
+        navBar.classList.toggle("open");
+        overlay.classList.toggle("show");
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+        overlay.classList.remove("show");
+      });
+
+      function setDarkMode(isDark) {
+        document.body.classList.toggle("dark-mode", isDark);
+        document.querySelector("nav").classList.toggle("dark-mode", isDark);
+        document
+          .querySelector(".sidebar")
+          .classList.toggle("dark-mode", isDark);
+        document
+          .querySelector(".result-container")
+          .classList.toggle("dark-mode", isDark);
+        document.querySelectorAll(".food-recommendations").forEach((div) => {
+          div.classList.toggle("dark-mode", isDark);
+        });
+        document.querySelectorAll(".back-button").forEach((button) => {
+          button.classList.toggle("dark-mode", isDark);
+        });
+        toggleDarkModeIcon.classList.replace(
+          isDark ? "bx-moon" : "bx-sun",
+          isDark ? "bx-sun" : "bx-moon"
+        );
+        localStorage.setItem("darkMode", isDark ? "true" : "false");
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () => {
+        setDarkMode(!document.body.classList.contains("dark-mode"));
+      });
+
+      if (localStorage.getItem("darkMode") === "true") {
+        setDarkMode(true);
+      }
+    </script>
+  </body>
+</html>

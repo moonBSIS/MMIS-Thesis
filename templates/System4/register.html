@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/register.css" />
+    <style>
+      select#barangay {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+        background-color: #fff;
+      }
+      select#barangay:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+    </style>
+  </head>
+  <body id="register-page">
+    <div class="login-container">
+      <div class="logo">
+        <img src="/static/pics/mmis-logo.png" alt="MMIS Logo" />
+      </div>
+      <h2>USER REGISTRATION FORM</h2>
+      <form
+        class="registration-form"
+        action="/user/signup"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <div class="input-group">
+          <label for="barangay">Select Your Barangay</label>
+          <select id="barangay" name="barangay" required>
+            <option value="" disabled selected>Select Barangay</option>
+            {% for barangay in barangays %}
+            <option value="{{ barangay }}">{{ barangay }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="fname">Enter Your Firstname</label>
+          <input
+            type="text"
+            id="fname"
+            name="fname"
+            placeholder="Firstname"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="lname">Enter Your Lastname</label>
+          <input
+            type="text"
+            id="lname"
+            name="lname"
+            placeholder="Lastname"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="email">Enter Your Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Email"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="pbday">Enter Your Date of Birth</label>
+          <input type="date" id="pbday" name="pbday" required />
+        </div>
+        <div class="input-group">
+          <label for="pnumber">Enter Your Phone Number</label>
+          <input
+            type="tel"
+            id="pnumber"
+            name="pnumber"
+            placeholder="09xxxxxxxxx"
+            pattern="[0-9]{11}"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="username">Enter Your Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Username"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="password">Enter Your Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="profile_picture">Upload Your Valid ID Picture</label>
+          <input
+            type="file"
+            id="profile_picture"
+            name="profile_picture"
+            accept="image/png, image/jpeg"
+            required
+          />
+        </div>
+        <button type="submit">SIGN UP</button>
+        <a href="/user/" class="no_underline"
+          >Already have an account? Login Here!</a
+        >
+        <a href="/" class="no_underline">Back to Menu</a>
+      </form>
+    </div>
+  </body>
+</html>

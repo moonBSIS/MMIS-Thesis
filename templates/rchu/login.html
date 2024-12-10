@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RHU Login</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <style>
+      .logo img {
+        width: 150px;
+        height: 150px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo">
+        <img
+          src="{{ url_for('static', filename='pics/mmis-logo.png') }}"
+          alt="MMIS Logo"
+        />
+      </div>
+      <h2>RHU LOGIN</h2>
+      <form action="{{ url_for('rchuLogin') }}" method="POST">
+        <div class="input-group">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Username"
+            required
+          />
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      <p class="register-link">Back to <a href="/">Menu</a></p>
+    </div>
+  </body>
+</html>

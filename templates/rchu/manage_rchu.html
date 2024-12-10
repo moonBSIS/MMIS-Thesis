@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage RCHUs</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home2.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Styles copied from manage_bhw.html */
+      .btn {
+        display: inline-block;
+        padding: 12px 20px;
+        font-size: 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #45a049;
+      }
+
+      .content {
+        text-align: center;
+      }
+
+      .content h1 {
+        margin-bottom: 20px;
+      }
+
+      .add-btn-container {
+        margin-bottom: 30px;
+      }
+
+      .table-container {
+        width: 80%;
+        margin: 20px auto;
+        text-align: left;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+      }
+
+      th {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .toggle-dark-mode {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #4caf50;
+        color: #ffffff;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .toggle-dark-mode i {
+        font-size: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('rchuDashboard') }}" class="nav-link active"
+                ><i class="bx bx-home-alt icon"></i
+                ><span class="link">Dashboard</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('manage_rchu') }}" class="nav-link active"
+                ><i class="bx bx-user-circle icon"></i
+                ><span class="link">Manage RCHUs</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('rchuManageBHWs') }}" class="nav-link"
+                ><i class="bx bxs-user-detail icon"></i
+                ><span class="link">Manage BHWs</span></a
+              >
+            </li>
+            <li class="list">
+              <a
+                href="{{ url_for('rchuViewAllPredictions') }}"
+                class="nav-link active"
+                ><i class="bx bx-bar-chart-alt-2 icon"></i
+                ><span class="link">View Prediction Results</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('rchuLogout') }}" class="nav-link"
+                ><i class="bx bx-log-out icon"></i
+                ><span class="link">Log out</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="content">
+      <h1>Manage RCHUs</h1>
+      <div class="add-btn-container">
+        <a href="{{ url_for('create_rchu_account') }}" class="btn"
+          >+ Add New RCHU</a
+        >
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rchu in rchus %}
+            <tr>
+              <td>{{ rchu.id }}</td>
+              <td>{{ rchu.username }}</td>
+              <td>
+                <a href="{{ url_for('update_rchu', id=rchu.id) }}" class="btn"
+                  >Edit</a
+                >
+                <form
+                  action="{{ url_for('delete_rchu', id=rchu.id) }}"
+                  method="POST"
+                  style="display: inline"
+                >
+                  <button type="submit" class="btn">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="toggle-dark-mode">
+      <i class="bx bx-moon"></i>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuIcon = document.querySelector(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      menuIcon.addEventListener("click", () => {
+        navBar.classList.toggle("open");
+        overlay.classList.toggle("open");
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+        overlay.classList.remove("open");
+      });
+
+      // Dark mode toggle functionality
+      function setDarkMode(isDark) {
+        if (isDark) {
+          document.body.classList.add("dark-mode");
+          document.querySelector("nav").classList.add("dark-mode");
+          document.querySelector(".sidebar").classList.add("dark-mode");
+          document.querySelector(".content").classList.add("dark-mode");
+          localStorage.setItem("darkMode", "true");
+          toggleDarkModeIcon.classList.replace("bx-moon", "bx-sun");
+        } else {
+          document.body.classList.remove("dark-mode");
+          document.querySelector("nav").classList.remove("dark-mode");
+          document.querySelector(".sidebar").classList.remove("dark-mode");
+          document.querySelector(".content").classList.remove("dark-mode");
+          localStorage.setItem("darkMode", "false");
+          toggleDarkModeIcon.classList.replace("bx-sun", "bx-moon");
+        }
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () => {
+        const isDark = document.body.classList.contains("dark-mode");
+        setDarkMode(!isDark);
+      });
+
+      if (localStorage.getItem("darkMode") === "true") {
+        setDarkMode(true);
+      }
+    </script>
+  </body>
+</html>

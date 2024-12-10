@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediction Results</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/results.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('userDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('viewProfile') }}" class="nav-link">
+                <i class="bx bx-user-circle icon"></i>
+                <span class="link">View Profile</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('about') }}" class="nav-link">
+                <i class="bx bx-cog icon"></i>
+                <span class="link">About Us</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('userLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="result-container">
+      <h3>Prediction Results</h3>
+      <table class="result-table">
+        <tr>
+          <td>Risk Level:</td>
+          <td>{{ prediction.prediction_result|safe }}</td>
+        </tr>
+        <tr>
+          <td>Child's Name:</td>
+          <td>
+            {{ prediction.child_first_name }} {{ prediction.child_last_name }}
+          </td>
+        </tr>
+        <tr>
+          <td>Child's Age:</td>
+          <td>{{ prediction.age }} months</td>
+        </tr>
+        <tr>
+          <td>Sex:</td>
+          <td>{{ prediction.sex }}</td>
+        </tr>
+        {% if household %}
+        <tr>
+          <td>Address:</td>
+          <td>{{ household.address }}</td>
+        </tr>
+        <tr>
+          <td>Mother's Name:</td>
+          <td>
+            {{ household.mother_first_name }} {{ household.mother_last_name }}
+          </td>
+        </tr>
+        <tr>
+          <td>Father's Name:</td>
+          <td>
+            {{ household.father_first_name }} {{ household.father_last_name }}
+          </td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td>Vitamin A:</td>
+          <td>{{ prediction.vitamin_a }}</td>
+        </tr>
+        <tr>
+          <td>Birth Order:</td>
+          <td>{{ prediction.birth_order }}</td>
+        </tr>
+        <tr>
+          <td>Breastfeeding:</td>
+          <td>{{ prediction.breastfeeding }}</td>
+        </tr>
+        <tr>
+          <td>Comorbidity Status:</td>
+          <td>{{ prediction.comorbidity_status }}</td>
+        </tr>
+        <tr>
+          <td>Type of Birth:</td>
+          <td>{{ prediction.type_of_birth }}</td>
+        </tr>
+        <tr>
+          <td>Size at Birth:</td>
+          <td>{{ prediction.size_at_birth }}</td>
+        </tr>
+        <tr>
+          <td>Dietary Diversity Score:</td>
+          <td>{{ prediction.dietary_diversity_score }}</td>
+        </tr>
+        <tr>
+          <td>Mother's Age:</td>
+          <td>{{ prediction.mothers_age }}</td>
+        </tr>
+        <tr>
+          <td>Mother's Education Level:</td>
+          <td>{{ prediction.mothers_education_level }}</td>
+        </tr>
+        <tr>
+          <td>Father's Education Level:</td>
+          <td>{{ prediction.fathers_education_level }}</td>
+        </tr>
+        <tr>
+          <td>Women's Autonomy Tertiles:</td>
+          <td>{{ prediction.womens_autonomy_tertiles }}</td>
+        </tr>
+        <tr>
+          <td>Toilet Facility:</td>
+          <td>{{ prediction.toilet_facility }}</td>
+        </tr>
+        <tr>
+          <td>Source of Drinking Water:</td>
+          <td>{{ prediction.source_of_drinking_water }}</td>
+        </tr>
+        <tr>
+          <td>BMI of Mother:</td>
+          <td>{{ prediction.bmi_of_mother }}</td>
+        </tr>
+        <tr>
+          <td>Number of Children Under Five:</td>
+          <td>{{ prediction.number_of_children_under_five }}</td>
+        </tr>
+        <tr>
+          <td>Mother's Working Status:</td>
+          <td>{{ prediction.mothers_working_status }}</td>
+        </tr>
+        <tr>
+          <td>Household Size:</td>
+          <td>{{ prediction.household_size }}</td>
+        </tr>
+        <tr>
+          <td>Wealth Quantile</td>
+          <td>{{ prediction.wealth_quantile }}</td>
+        </tr>
+      </table>
+
+      <div class="food-recommendations">
+        <h4>
+          Suggested meal plan for a {{ prediction.age }}-month-old child at {{
+          prediction.prediction_result|safe }} level:
+        </h4>
+        <ul>
+          {% for meal in meal_plan %}
+          <li>{{ meal }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <button
+        class="back-button"
+        onclick="window.location.href='{{ url_for('userDashboard') }}'"
+      >
+        Go Back
+      </button>
+    </div>
+
+    <div class="toggle-dark-mode">
+      <i class="bx bx-moon"></i>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        submenuToggles = document.querySelectorAll(".submenu-toggle"),
+        toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      submenuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          const submenu = toggle.nextElementSibling;
+          submenu.classList.toggle("open");
+          toggle.querySelector(".arrow").classList.toggle("open");
+        });
+      });
+
+      function setDarkMode(isDark) {
+        if (isDark) {
+          document.body.classList.add("dark-mode");
+          document.querySelector("nav").classList.add("dark-mode");
+          document
+            .querySelector(".result-container")
+            .classList.add("dark-mode");
+          document
+            .querySelectorAll(".result-table")
+            .forEach((table) => table.classList.add("dark-mode"));
+          localStorage.setItem("darkMode", "true");
+          toggleDarkModeIcon.classList.replace("bx-moon", "bx-sun");
+        } else {
+          document.body.classList.remove("dark-mode");
+          document.querySelector("nav").classList.remove("dark-mode");
+          document
+            .querySelector(".result-container")
+            .classList.remove("dark-mode");
+          document
+            .querySelectorAll(".result-table")
+            .forEach((table) => table.classList.remove("dark-mode"));
+          localStorage.setItem("darkMode", "false");
+          toggleDarkModeIcon.classList.replace("bx-sun", "bx-moon");
+        }
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () => {
+        const isDark = document.body.classList.contains("dark-mode");
+        setDarkMode(!isDark);
+      });
+
+      // Initialize dark mode based on user's preference
+      if (localStorage.getItem("darkMode") === "true") {
+        setDarkMode(true);
+      }
+    </script>
+  </body>
+</html>

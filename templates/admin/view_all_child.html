@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Manage Child</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/manage_child.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .container h1 {
+        text-align: center;
+        justify-content: center;
+        display: flex;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .action-button,
+      .table-action-button {
+        padding: 6px 10px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s, color 0.3s;
+        text-align: center;
+      }
+      .action-button:hover,
+      .table-action-button:hover {
+        background-color: #45a049;
+        color: #fff;
+      }
+      .delete-btn {
+        background-color: #f44336;
+      }
+      .delete-btn:hover {
+        background-color: #e41e1e;
+      }
+      .view-btn {
+        background-color: #2196f3;
+      }
+      .view-btn:hover {
+        background-color: #1e88e5;
+      }
+      .search-bar {
+        width: 100%;
+        padding: 10px;
+        margin-top: 40px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      body.dark-mode .search-bar {
+        background-color: #333;
+        color: #ffffff;
+        border-color: #555;
+      }
+      table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+      }
+      table th,
+      table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      form.delete-form {
+        display: inline;
+      }
+
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .modal-content h2 {
+        text-align: center;
+      }
+      /* Dark mode styles for the modal */
+      body.dark-mode .modal-content {
+        background-color: #333;
+        color: #ffffff;
+        border-color: #555;
+      }
+      .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close-btn:hover,
+      .close-btn:focus {
+        color: black;
+      }
+      .confirm-btn,
+      .delete-all-btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .delete-all-btn {
+        background-color: #f44336;
+      }
+      .confirm-btn:hover {
+        background-color: #45a049;
+      }
+      .delete-all-btn:hover {
+        background-color: #e41e1e;
+      }
+      /* Edit button inside modal */
+      .edit-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .edit-btn:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('adminDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('adminUserProfiles') }}" class="nav-link">
+                <i class="bx bx-user-circle icon"></i>
+                <span class="link">User Profiles</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('view_all_children') }}" class="nav-link">
+                <i class="bx bx-file icon"></i>
+                <span class="link">View All Records</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('adminLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="container profile-form">
+      <h1>All Children Records</h1>
+
+      <input
+        type="text"
+        id="searchBar"
+        class="search-bar"
+        placeholder="Search by Name, Sex, Age, or Prediction Result"
+        onkeyup="filterTable()"
+      />
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Prediction ID</th>
+              <th>Mother's Name</th>
+              <th>Child's Name</th>
+              <th>Age (months)</th>
+              <th>Sex</th>
+              <th>Prediction Result</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="childTableBody">
+            {% for child, household in children_with_households %}
+            <tr>
+              <td>
+                {{ latest_predictions[child.id].id if
+                latest_predictions[child.id] else 'N/A' }}
+              </td>
+              <td>
+                {{ household.mother_first_name }} {{ household.mother_last_name
+                }}
+              </td>
+              <td>{{ child.first_name }} {{ child.last_name }}</td>
+              <td>
+                {{ latest_predictions[child.id].age if
+                latest_predictions[child.id] else 'N/A' }}
+              </td>
+              <td>
+                {{ latest_predictions[child.id].sex if
+                latest_predictions[child.id] else 'N/A' }}
+              </td>
+              <td>
+                {{ latest_predictions[child.id].prediction_result|safe if
+                latest_predictions[child.id] else 'N/A' }}
+              </td>
+              <td>
+                <div class="action-buttons">
+                  {% if latest_predictions[child.id] %}
+                  <form
+                    action="{{ url_for('adminResultsHistory') }}"
+                    method="get"
+                    style="display: inline"
+                  >
+                    <input
+                      type="hidden"
+                      name="child_id"
+                      value="{{ child.id }}"
+                    />
+                    <button type="submit" class="table-action-button view-btn">
+                      Results
+                    </button>
+                  </form>
+                  {% endif %}
+                  <button
+                    class="table-action-button delete-btn"
+                    onclick="openDeleteModal({{ child.id }})"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- View Children Modal -->
+    <div id="viewChildrenModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeViewChildrenModal()"
+          >&times;</span
+        >
+        <h2>List of Children</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Child's Name</th>
+              <th>Age (months)</th>
+              <th>Sex</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for child in children %}
+            <tr>
+              <td>{{ child.first_name }} {{ child.last_name }}</td>
+              <td>
+                {{ latest_predictions[child.id].age if
+                latest_predictions[child.id] else 'N/A' }}
+              </td>
+              <td>
+                {{ latest_predictions[child.id].sex if
+                latest_predictions[child.id] else 'N/A' }}
+              </td>
+              <td>
+                <a
+                  href="{{ url_for('edit_child', child_id=child.id) }}"
+                  class="edit-btn"
+                  >Edit</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
+        <h2>Delete Confirmation</h2>
+        <p>Are you sure you want to delete this child?</p>
+        <p><strong>Choose an option:</strong></p>
+        <form id="deletePredictionsForm" method="POST">
+          <input type="hidden" name="user_id" value="{{ user.id }}" />
+          <button type="submit" class="confirm-btn">
+            Delete Predictions Only
+          </button>
+        </form>
+        <form id="deleteChildForm" method="POST">
+          <input type="hidden" name="user_id" value="{{ user.id }}" />
+          <button type="submit" class="delete-all-btn">
+            Delete Child &amp; Predictions
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="toggle-dark-mode">
+      <i class="bx bx-moon"></i>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuIcon = document.querySelector(".menu-icon"),
+        sidebar = document.querySelector(".sidebar"),
+        overlay = document.querySelector(".overlay"),
+        toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      // Sidebar toggle functionality
+      menuIcon.addEventListener("click", () => {
+        navBar.classList.toggle("open");
+        overlay.classList.toggle("show");
+      });
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+        overlay.classList.remove("show");
+      });
+
+      // Dark mode toggle functionality
+      function setDarkMode(isDark) {
+        document.body.classList.toggle("dark-mode", isDark);
+        navBar.classList.toggle("dark-mode", isDark);
+        sidebar.classList.toggle("dark-mode", isDark);
+        document
+          .querySelector(".profile-form")
+          .classList.toggle("dark-mode", isDark);
+        localStorage.setItem("darkMode", isDark);
+        toggleDarkModeIcon.classList.replace(
+          isDark ? "bx-moon" : "bx-sun",
+          isDark ? "bx-sun" : "bx-moon"
+        );
+      }
+      toggleDarkModeBtn.addEventListener("click", () =>
+        setDarkMode(!document.body.classList.contains("dark-mode"))
+      );
+      if (localStorage.getItem("darkMode") === "true") setDarkMode(true);
+
+      // Modal script for delete confirmation
+      function openDeleteModal(childId) {
+        document.getElementById("deleteModal").style.display = "block";
+        // Set child ID for use in AJAX requests
+        document.getElementById("deletePredictionsForm").dataset.childId =
+          childId;
+        document.getElementById("deleteChildForm").dataset.childId = childId;
+      }
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").style.display = "none";
+      }
+
+      // AJAX function to delete predictions only
+      document
+        .getElementById("deletePredictionsForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const childId = this.dataset.childId;
+          fetch(`/delete_predictions/${childId}`, { method: "POST" })
+            .then((response) => response.json())
+            .then((data) => {
+              alert(data.message);
+              closeDeleteModal();
+              location.reload(); // Reload the page to reflect the deletion
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+
+      // AJAX function to delete child and predictions
+      document
+        .getElementById("deleteChildForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const childId = this.dataset.childId;
+          fetch(`/delete_child/${childId}`, { method: "POST" })
+            .then((response) => response.json())
+            .then((data) => {
+              alert(data.message);
+              closeDeleteModal();
+              location.reload(); // Reload the page to reflect the deletion
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+
+      // Open and close the View Children modal
+      function openViewChildrenModal() {
+        document.getElementById("viewChildrenModal").style.display = "block";
+      }
+      function closeViewChildrenModal() {
+        document.getElementById("viewChildrenModal").style.display = "none";
+      }
+
+      // Close modal if user clicks outside
+      window.onclick = function (event) {
+        const deleteModal = document.getElementById("deleteModal");
+        const viewChildrenModal = document.getElementById("viewChildrenModal");
+        if (event.target === deleteModal) closeDeleteModal();
+        if (event.target === viewChildrenModal) closeViewChildrenModal();
+      };
+
+      function filterTable() {
+        // Get the input value and convert to lowercase for case-insensitive comparison
+        const input = document.getElementById("searchBar").value.toLowerCase();
+        const tableBody = document.getElementById("childTableBody");
+        const rows = tableBody.getElementsByTagName("tr");
+
+        // Loop through each row and filter based on Name, Sex, Age, and Prediction Result
+        for (let i = 0; i < rows.length; i++) {
+          const cells = rows[i].getElementsByTagName("td");
+          const childName = cells[2].textContent.toLowerCase(); // Child's Name
+          const age = cells[3].textContent.toLowerCase(); // Age in months
+          const sex = cells[4].textContent.toLowerCase(); // Sex
+          const predictionResult = cells[5].textContent.toLowerCase(); // Prediction Result
+
+          // Check if any of the columns match the search input
+          if (
+            childName.includes(input) ||
+            age.includes(input) ||
+            sex.includes(input) ||
+            predictionResult.includes(input)
+          ) {
+            rows[i].style.display = ""; // Show row if match found
+          } else {
+            rows[i].style.display = "none"; // Hide row if no match
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

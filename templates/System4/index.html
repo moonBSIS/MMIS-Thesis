@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MMIS</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <style>
+      .logo img {
+        width: 150px;
+        height: 150px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="login-screen">
+        <div class="logo">
+          <img
+            src="{{ url_for('static', filename='pics/mmis-logo.png') }}"
+            alt="MMIS Logo"
+          />
+        </div>
+        <h1>MMIS</h1>
+        <p>Malnutrition Monitoring and Intervention System</p>
+        <form action="{{ url_for('userTypeRedirect') }}" method="POST">
+          <select name="user-type" id="user-type" required>
+            <option value="" disabled selected>
+              Select type of user to login
+            </option>
+            <option value="guardian">Guardian</option>
+            <option value="health_worker">BHW</option>
+            <option value="rch">RHU</option>
+          </select>
+          <button type="submit" id="sign-in">Next</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

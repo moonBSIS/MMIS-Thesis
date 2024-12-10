@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Child</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home2.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      .form-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .form-group button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .form-group button:hover {
+        background-color: #45a049;
+      }
+      /* Dark mode styling */
+      body.dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+      nav.dark-mode,
+      .sidebar.dark-mode,
+      .form-container.dark-mode {
+        background-color: #1e1e1e;
+      }
+      .form-group input.dark-mode {
+        background-color: #333;
+        color: #ffffff;
+        border-color: #444;
+      }
+
+      button.save-btn {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('adminDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('adminUserProfiles') }}" class="nav-link">
+                <i class="bx bx-user-circle icon"></i>
+                <span class="link">User Profiles</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('view_all_children') }}" class="nav-link">
+                <i class="bx bx-file icon"></i>
+                <span class="link">View All Records</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('adminLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <section class="overlay"></section>
+
+    <div class="form-container">
+      <h1>Add Child</h1>
+
+      <form
+        method="POST"
+        action="{{ url_for('add_child', user_id=request.args.get('user_id')) }}"
+      >
+        {{ form.hidden_tag() }}
+        <input
+          type="hidden"
+          name="user_id"
+          value="{{ request.args.get('user_id') }}"
+        />
+
+        <div class="form-group">
+          {{ form.first_name.label }} {{ form.first_name(class_="form-control")
+          }}
+        </div>
+        <div class="form-group">
+          {{ form.last_name.label }} {{ form.last_name(class_="form-control") }}
+        </div>
+        <div class="form-group">
+          <button type="submit" class="save-btn">Add Child</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="toggle-dark-mode">
+      <i class="bx bx-moon"></i>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      function setDarkMode(isDark) {
+        if (isDark) {
+          document.body.classList.add("dark-mode");
+          document.querySelector("nav").classList.add("dark-mode");
+          document.querySelector(".sidebar").classList.add("dark-mode");
+          document.querySelector(".form-container").classList.add("dark-mode");
+          localStorage.setItem("darkMode", "true");
+          toggleDarkModeIcon.classList.replace("bx-moon", "bx-sun");
+        } else {
+          document.body.classList.remove("dark-mode");
+          document.querySelector("nav").classList.remove("dark-mode");
+          document.querySelector(".sidebar").classList.remove("dark-mode");
+          document
+            .querySelector(".form-container")
+            .classList.remove("dark-mode");
+          localStorage.setItem("darkMode", "false");
+          toggleDarkModeIcon.classList.replace("bx-sun", "bx-moon");
+        }
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () => {
+        const isDark = document.body.classList.contains("dark-mode");
+        setDarkMode(!isDark);
+      });
+
+      if (localStorage.getItem("darkMode") === "true") {
+        setDarkMode(true);
+      }
+    </script>
+  </body>
+</html>

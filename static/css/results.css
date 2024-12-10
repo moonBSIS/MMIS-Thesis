@@ -1,0 +1,323 @@
+/* Google Fonts - Poppins */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  min-height: 100%;
+  background: white;
+  padding-top: 70px; /* Ensure the content starts below the fixed nav bar */
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 70px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background: lightgreen;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensure it stays on top */
+}
+
+nav .logo {
+  display: flex;
+  align-items: center;
+  margin: 0 24px;
+}
+
+.logo .menu-icon {
+  color: #333;
+  font-size: 24px;
+  margin-right: 14px;
+  cursor: pointer;
+}
+
+.logo .logo-name,
+.logo .logname {
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+nav .sidebar {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  height: 100%;
+  width: 260px;
+  padding: 20px 0;
+  background-color: #fff;
+  box-shadow: 0 5px 1px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+}
+
+nav.open .sidebar {
+  left: 0;
+}
+
+.sidebar .sidebar-content {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 30px 16px;
+}
+
+.sidebar-content .list {
+  list-style: none;
+}
+
+.list .nav-link {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  padding: 14px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.lists .nav-link:hover {
+  background-color: grey;
+}
+
+.nav-link .icon {
+  margin-right: 14px;
+  font-size: 20px;
+  color: #707070;
+}
+
+.nav-link .link {
+  font-size: 16px;
+  color: #707070;
+  font-weight: 400;
+}
+
+.lists .nav-link:hover .icon,
+.lists .nav-link:hover .link {
+  color: #fff;
+}
+
+.submenu {
+  display: none;
+  list-style: none;
+  padding-left: 20px;
+}
+
+.submenu.open {
+  display: block;
+}
+
+.submenu li a {
+  display: block;
+  padding: 10px;
+  color: #707070;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.submenu li a:hover {
+  background-color: grey;
+  color: #fff;
+}
+
+.arrow {
+  margin-left: auto;
+  transition: transform 0.4s ease;
+}
+
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  height: 1000vh;
+  width: 200%;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s ease;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+nav.open ~ .overlay {
+  opacity: 1;
+  left: 260px;
+  pointer-events: auto;
+}
+
+.result-container {
+  width: 80%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.result-container h3 {
+  margin-bottom: 20px;
+}
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.result-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.result-table td:first-child {
+  font-weight: bold;
+  width: 30%;
+}
+
+.food-recommendations {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.food-recommendations h4 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #333;
+}
+
+.food-recommendations p {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.food-recommendations ul {
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
+.food-recommendations ul li {
+  margin-bottom: 5px;
+}
+
+.back-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode nav {
+  background-color: #333;
+}
+
+body.dark-mode .logo .logo-name,
+body.dark-mode .logo .logname,
+body.dark-mode .logo .menu-icon {
+  color: #e0e0e0;
+}
+
+body.dark-mode .sidebar {
+  background-color: #1e1e1e;
+  box-shadow: 0 5px 1px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .sidebar-content .list .nav-link {
+  color: #e0e0e0;
+}
+
+body.dark-mode .lists .nav-link:hover {
+  background-color: #444;
+}
+
+body.dark-mode .submenu li a {
+  color: #e0e0e0;
+}
+
+body.dark-mode .submenu li a:hover {
+  background-color: #444;
+}
+
+body.dark-mode .result-container {
+  background-color: #1e1e1e;
+  border: 1px solid #444;
+}
+
+body.dark-mode .result-table td {
+  border: 1px solid #444;
+}
+
+body.dark-mode .food-recommendations {
+  background-color: #1e1e1e;
+  border: 1px solid #444;
+}
+
+body.dark-mode .food-recommendations h4 {
+  color: #e0e0e0;
+}
+
+body.dark-mode .food-recommendations p {
+  color: #e0e0e0;
+}
+
+body.dark-mode .food-recommendations ul li {
+  color: #e0e0e0;
+}
+
+body.dark-mode .back-button {
+  background-color: #007bff;
+}
+
+.toggle-dark-mode {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.toggle-dark-mode:hover {
+  background-color: #45a049;
+}
+
+.toggle-dark-mode i {
+  color: white;
+  font-size: 24px;
+}
+
+body.dark-mode .toggle-dark-mode {
+  background-color: #ffa500; /* Change background color to orange in dark mode */
+}
+
+body.dark-mode .toggle-dark-mode:hover {
+  background-color: #ff8c00;
+}

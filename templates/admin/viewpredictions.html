@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Predictions</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home2.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .container {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+      }
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+      }
+      .btn-view {
+        background-color: #2196f3;
+        color: #fff;
+      }
+      .btn-view:hover {
+        background-color: #1e88e5;
+      }
+      .btn-delete {
+        background-color: #f44336;
+        color: #fff;
+      }
+      .btn-delete:hover {
+        background-color: #e53935;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('adminDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('adminUserProfiles') }}" class="nav-link">
+                <i class="bx bx-user-circle icon"></i>
+                <span class="link">User Profiles</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('view_all_children') }}" class="nav-link">
+                <i class="bx bx-file icon"></i>
+                <span class="link">View All Records</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('adminLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <section class="overlay"></section>
+
+    <div class="container">
+      <h1>View Predictions</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Prediction ID</th>
+            <th>Child's Name</th>
+            <th>Age (months)</th>
+            <th>Sex</th>
+            <th>Prediction Result</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prediction in predictions %}
+          <tr>
+            <td>{{ prediction.id }}</td>
+            <td>
+              {{ prediction.child_first_name }} {{ prediction.child_last_name }}
+            </td>
+            <td>{{ prediction.age }}</td>
+            <td>{{ prediction.sex }}</td>
+            <td>{{ prediction.prediction_result }}</td>
+            <td>
+              <div class="action-buttons">
+                <a
+                  href="{{ url_for('adminViewResultsButton', prediction_id=prediction.id) }}"
+                  class="btn btn-view"
+                  >View Results</a
+                >
+                <form
+                  action="{{ url_for('deletePrediction', prediction_id=prediction.id) }}"
+                  method="post"
+                  style="display: inline"
+                >
+                  <button type="submit" class="btn btn-delete">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        submenuToggles = document.querySelectorAll(".submenu-toggle");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      submenuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          const submenu = toggle.nextElementSibling;
+          submenu.classList.toggle("open");
+          toggle.querySelector(".arrow").classList.toggle("open");
+        });
+      });
+
+      window.addEventListener("load", () => {
+        const url = window.location.href;
+        if (url.includes("predict")) {
+          document.getElementById("predict-form").style.display = "block";
+        } else {
+          document.getElementById("predict-form").style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

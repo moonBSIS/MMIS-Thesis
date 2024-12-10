@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parent Data</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/record.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('userDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#" class="nav-link submenu-toggle">
+                <i class="bx bx-folder-open icon"></i>
+                <span class="link">Add New Record</span>
+                <i class="bx bx-chevron-down arrow"></i>
+              </a>
+              <ul class="submenu">
+                <li><a href="{{ url_for('add_child') }}">Child Data</a></li>
+                <li>
+                  <a href="{{ url_for('add_household') }}"
+                    >Maternal/Household Data</a
+                  >
+                </li>
+              </ul>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('predict') }}" class="nav-link">
+                <i class="bx bx-spreadsheet icon"></i>
+                <span class="link">Predict</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('reports') }}" class="nav-link">
+                <i class="bx bx-bar-chart-alt-2 icon"></i>
+                <span class="link">Reports</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('about') }}" class="nav-link">
+                <i class="bx bx-cog icon"></i>
+                <span class="link">About</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('userLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <!-- Child Data Form -->
+    <div class="profile-form" id="parent-data-form">
+      <h3>Child Data - Basic Information</h3>
+      <form class="form-grid" method="POST" action="{{ url_for('add_child') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          {{ form.first_name.label }}<br />
+          {{ form.first_name(size=20) }}
+        </div>
+        <div class="form-group">
+          {{ form.last_name.label }}<br />
+          {{ form.last_name(size=20) }}
+        </div>
+        <div class="form-group">
+          {{ form.age.label }}<br />
+          {{ form.age() }}
+        </div>
+        <div class="form-group">
+          {{ form.sex.label }}<br />
+          {{ form.sex() }}
+        </div>
+        <div class="form-group">
+          {{ form.vitamin_a.label }}<br />
+          {{ form.vitamin_a() }}
+        </div>
+        <div class="form-group">
+          {{ form.birth_order.label }}<br />
+          {{ form.birth_order() }}
+        </div>
+        <div class="form-group">
+          {{ form.breastfeeding.label }}<br />
+          {{ form.breastfeeding() }}
+        </div>
+        <div class="form-group full-width">{{ form.submit() }}</div>
+      </form>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        submenuToggles = document.querySelectorAll(".submenu-toggle");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      submenuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          const submenu = toggle.nextElementSibling;
+          submenu.classList.toggle("open");
+          toggle.querySelector(".arrow").classList.toggle("open");
+        });
+      });
+
+      window.addEventListener("load", () => {
+        const url = window.location.href;
+        if (url.includes("precord.html")) {
+          document.getElementById("parent-data-form").style.display = "block";
+        } else {
+          document.getElementById("parent-data-form").style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

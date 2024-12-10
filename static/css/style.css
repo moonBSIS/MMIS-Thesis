@@ -1,0 +1,125 @@
+body {
+  background-image: linear-gradient(
+    68.6deg,
+    rgba(79, 183, 131, 1) 14.4%,
+    rgba(254, 235, 151, 1) 92.7%
+  );
+  font-family: Arial, sans-serif;
+  margin: 0; /* Remove default margin */
+  height: 100vh; /* Full height */
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+}
+
+.container {
+  width: 90%;
+  max-width: 300px; /* Max width for larger screens */
+  background-color: #ffffff; /* blue background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center; /* centers text horizontally */
+}
+
+h1,
+p {
+  color: #032b44; /* white text */
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+p {
+  margin-bottom: 20px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px; /* Adjust font size of the select dropdown */
+  cursor: pointer;
+}
+
+#sign-in {
+  background-color: #4caf50; /* green button */
+  color: #ffffff; /* white text */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+#sign-in:hover {
+  background-color: #3e8e41; /* darker green on hover */
+}
+
+option {
+  font-size: 14px;
+  color: #333; /* Optional: change the text color if needed */
+  background-color: white; /* Ensures a consistent background color */
+}
+
+.login-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 300px;
+}
+
+.logo img {
+  width: 100px; /* Set the width */
+  height: 100px; /* Set the height to the same as the width to maintain aspect ratio */
+  border-radius: 100%; /* This makes the image circular */
+  object-fit: cover; /* Ensures the image covers the area without being distorted */
+  margin-bottom: 0px;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.input-group input {
+  width: 94%;
+  padding: 10px;
+  margin-bottom: 20px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: rgb(167, 231, 167);
+}
+
+.forgot-password {
+  margin-top: 20px;
+}
+
+.forgot-password a {
+  color: #333;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}

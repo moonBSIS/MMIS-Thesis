@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Predict</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/record2.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .legend {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      .legend h3 {
+        margin-bottom: 10px;
+        font-size: 18px;
+        color: #333;
+      }
+      .legend p {
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+      .legend ul {
+        margin-left: 20px;
+        list-style-type: none;
+        padding-left: 0;
+      }
+      .legend ul li {
+        margin-bottom: 10px;
+      }
+      .legend ul li strong {
+        display: inline-block;
+        width: 150px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('userDashboard') }}" class="nav-link">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="link">Dashboard</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#" class="nav-link submenu-toggle">
+                <i class="bx bx-folder-open icon"></i>
+                <span class="link">Add New Record</span>
+                <i class="bx bx-chevron-down arrow"></i>
+              </a>
+              <ul class="submenu">
+                <li><a href="{{ url_for('add_child') }}">Child Data</a></li>
+                <li>
+                  <a href="{{ url_for('add_household') }}"
+                    >Maternal/Household Data</a
+                  >
+                </li>
+              </ul>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('predict') }}" class="nav-link">
+                <i class="bx bx-spreadsheet icon"></i>
+                <span class="link">Predict</span>
+              </a>
+            </li>
+            <li class="list">
+              <a
+                href="{{ url_for('results', prediction_id=0) }}"
+                class="nav-link"
+              >
+                <i class="bx bx-bar-chart-alt-2 icon"></i>
+                <span class="link">Results</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('about') }}" class="nav-link">
+                <i class="bx bx-cog icon"></i>
+                <span class="link">About</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="{{ url_for('userLogout') }}" class="nav-link">
+                <i class="bx bx-log-out icon"></i>
+                <span class="link">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="profile-form" id="predict-form">
+      <h3>Predict Malnutrition Risk</h3>
+      <form class="form-grid" method="POST" action="{{ url_for('predict') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          {{ form.child_first_name.label }}<br />{{
+          form.child_first_name(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.child_last_name.label }}<br />{{
+          form.child_last_name(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.age.label }}<br />{{ form.age(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.sex.label }}<br />{{ form.sex(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.vitamin_a.label }}<br />{{
+          form.vitamin_a(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.birth_order.label }}<br />{{
+          form.birth_order(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.breastfeeding.label }}<br />{{
+          form.breastfeeding(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.comorbidity_status.label }}<br />{{
+          form.comorbidity_status(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.type_of_birth.label }}<br />{{
+          form.type_of_birth(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.size_at_birth.label }}<br />{{
+          form.size_at_birth(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.dietary_diversity_score.label }}<br />{{
+          form.dietary_diversity_score(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.mothers_age.label }}<br />{{
+          form.mothers_age(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.residence.label }}<br />{{
+          form.residence(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.mothers_education_level.label }}<br />{{
+          form.mothers_education_level(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.fathers_education_level.label }}<br />{{
+          form.fathers_education_level(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.womens_autonomy_tertiles.label }}<br />{{
+          form.womens_autonomy_tertiles(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.toilet_facility.label }}<br />{{
+          form.toilet_facility(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.source_of_drinking_water.label }}<br />{{
+          form.source_of_drinking_water(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.bmi_of_mother.label }}<br />{{
+          form.bmi_of_mother(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.number_of_children_under_five.label }}<br />{{
+          form.number_of_children_under_five(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.media_exposure.label }}<br />{{
+          form.media_exposure(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.mothers_working_status.label }}<br />{{
+          form.mothers_working_status(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.household_size.label }}<br />{{
+          form.household_size(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.wealth_quantile.label }}<br />{{
+          form.wealth_quantile(class="form-control") }}
+        </div>
+        <div class="form-group full-width">
+          {{ form.submit(class="btn btn-success predict-btn") }}
+        </div>
+      </form>
+
+      <!-- Wealth Quantile Legend -->
+      <div class="legend">
+        <h3>Philippine Income Classes</h3>
+        <p>by Philippine Institute of Development Studies 2024</p>
+        <ul>
+          <li><strong>Poor:</strong> ₱0 - ₱9,520</li>
+          <li><strong>Low Income:</strong> ₱9,520 - ₱19,040</li>
+          <li><strong>Low Middle Income:</strong> ₱19,040 - ₱38,080</li>
+          <li><strong>Middle Income:</strong> ₱38,080 - ₱66,640</li>
+          <li><strong>Upper Middle Income:</strong> ₱66,640 - ₱114,240</li>
+          <li><strong>Upper Income:</strong> ₱114,240 - ₱190,400</li>
+          <li><strong>Rich:</strong> ₱190,400 and above</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        submenuToggles = document.querySelectorAll(".submenu-toggle");
+
+      menuBtns.forEach((menuBtn) => {
+        menuBtn.addEventListener("click", () => {
+          navBar.classList.toggle("open");
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        navBar.classList.remove("open");
+      });
+
+      submenuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          const submenu = toggle.nextElementSibling;
+          submenu.classList.toggle("open");
+          toggle.querySelector(".arrow").classList.toggle("open");
+        });
+      });
+
+      window.addEventListener("load", () => {
+        const url = window.location.href;
+        if (url.includes("predict")) {
+          document.getElementById("predict-form").style.display = "block";
+        } else {
+          document.getElementById("predict-form").style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

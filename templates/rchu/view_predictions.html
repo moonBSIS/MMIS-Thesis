@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Predictions</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home2.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .container {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .search-bar {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      body.dark-mode .search-bar {
+        background-color: #333;
+        color: #ffffff;
+        border-color: #555;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      td {
+        background-color: #fff;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+      }
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+      }
+      .btn-view {
+        background-color: #2196f3;
+        color: #fff;
+      }
+      .btn-view:hover {
+        background-color: #1e88e5;
+      }
+      .toggle-dark-mode {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #4caf50;
+        color: #ffffff;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .toggle-dark-mode i {
+        font-size: 24px;
+      }
+      .dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+      .dark-mode nav,
+      .dark-mode .sidebar,
+      .dark-mode .container,
+      .dark-mode table,
+      .dark-mode th,
+      .dark-mode td {
+        background-color: #1e1e1e;
+        color: #ffffff;
+        border-color: #333;
+      }
+      .dark-mode th {
+        background-color: #333;
+      }
+      .dark-mode h1 {
+        color: #ffffff;
+      }
+      .dark-mode .btn-view {
+        background-color: #2196f3;
+      }
+      body.dark-mode .logo-name,
+      body.dark-mode .menu-icon,
+      body.dark-mode .logname {
+        color: #fff;
+      }
+      .button-bar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      .download-btn {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .download-btn:hover {
+        background-color: #45a049;
+      }
+      .search-bar {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <i class="bx bx-menu menu-icon"></i>
+        <span class="logo-name"
+          >Malnutrition Monitoring and Intervention System</span
+        >
+      </div>
+      <div class="sidebar">
+        <div class="logo">
+          <i class="bx bx-menu menu-icon"></i>
+          <span class="logname">MMIS</span>
+        </div>
+        <div class="sidebar-content">
+          <ul class="lists">
+            <li class="list">
+              <a href="{{ url_for('rchuDashboard') }}" class="nav-link active"
+                ><i class="bx bx-home-alt icon"></i
+                ><span class="link">Dashboard</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('manage_rchu') }}" class="nav-link active"
+                ><i class="bx bx-user-circle icon"></i
+                ><span class="link">Manage RCHUs</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('rchuManageBHWs') }}" class="nav-link"
+                ><i class="bx bxs-user-detail icon"></i
+                ><span class="link">Manage BHWs</span></a
+              >
+            </li>
+            <li class="list">
+              <a
+                href="{{ url_for('rchuViewAllPredictions') }}"
+                class="nav-link active"
+                ><i class="bx bx-bar-chart-alt-2 icon"></i
+                ><span class="link">View Prediction Results</span></a
+              >
+            </li>
+            <li class="list">
+              <a href="{{ url_for('rchuLogout') }}" class="nav-link"
+                ><i class="bx bx-log-out icon"></i
+                ><span class="link">Log out</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="overlay"></section>
+
+    <div class="container">
+      <h1>View Predictions for All Barangays</h1>
+
+      <div class="button-bar">
+        <a href="{{ url_for('download_predictions') }}" class="download-btn">
+          Download as CSV
+        </a>
+      </div>
+
+      <!-- Search Bar -->
+      <input
+        type="text"
+        id="searchBar"
+        class="search-bar"
+        placeholder="Search by Barangay, Child's Name, Age, Prediction Result, or Sex..."
+      />
+
+      <!-- Predictions Table -->
+      <table>
+        <thead>
+          <tr>
+            <th>Barangay</th>
+            <th>Child's Name</th>
+            <th>Age (months)</th>
+            <th>Sex</th>
+            <th>Prediction Result</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="predictionsTableBody">
+          {% for prediction in predictions %}
+          <tr class="prediction-row">
+            <td class="barangay">{{ prediction.barangay_name }}</td>
+            <td class="name">
+              {{ prediction.child_first_name }} {{ prediction.child_last_name }}
+            </td>
+            <td class="age">{{ prediction.age }}</td>
+            <td class="sex">{{ prediction.sex }}</td>
+            <td class="result">{{ prediction.prediction_result|safe }}</td>
+            <td>
+              <div class="action-buttons">
+                <a
+                  href="{{ url_for('rchuViewPrediction', prediction_id=prediction.id) }}"
+                  class="btn btn-view"
+                  >View</a
+                >
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="toggle-dark-mode"><i class="bx bx-moon"></i></div>
+
+    <script>
+      const navBar = document.querySelector("nav"),
+        menuBtns = document.querySelectorAll(".menu-icon"),
+        overlay = document.querySelector(".overlay"),
+        toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
+        toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
+
+      menuBtns.forEach((menuBtn) =>
+        menuBtn.addEventListener("click", () => navBar.classList.toggle("open"))
+      );
+      overlay.addEventListener("click", () => navBar.classList.remove("open"));
+
+      function setDarkMode(isDark) {
+        document.body.classList.toggle("dark-mode", isDark);
+        localStorage.setItem("darkMode", isDark ? "true" : "false");
+        toggleDarkModeIcon.classList.replace(
+          isDark ? "bx-moon" : "bx-sun",
+          isDark ? "bx-sun" : "bx-moon"
+        );
+      }
+
+      toggleDarkModeBtn.addEventListener("click", () =>
+        setDarkMode(!document.body.classList.contains("dark-mode"))
+      );
+      if (localStorage.getItem("darkMode") === "true") setDarkMode(true);
+
+      // Search functionality
+      const searchInput = document.getElementById("searchBar");
+      const rows = document.querySelectorAll(".prediction-row");
+
+      searchInput.addEventListener("input", function () {
+        const query = searchInput.value.toLowerCase();
+
+        rows.forEach((row) => {
+          const barangay = row
+            .querySelector(".barangay")
+            .textContent.toLowerCase();
+          const name = row.querySelector(".name").textContent.toLowerCase();
+          const age = row.querySelector(".age").textContent.toLowerCase();
+          const result = row.querySelector(".result").textContent.toLowerCase();
+          const sex = row.querySelector(".sex").textContent.toLowerCase();
+
+          if (
+            barangay.includes(query) ||
+            name.includes(query) ||
+            age.includes(query) ||
+            result.includes(query) ||
+            sex.includes(query)
+          ) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
