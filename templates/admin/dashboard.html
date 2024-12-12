@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
+    <title>BHW Dashboard</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/home2.css') }}"
@@ -35,26 +35,37 @@
         color: #fff;
       }
       .chart-container {
-        width: 80%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
         margin: 20px auto;
-        display: none;
+        width: 90%;
       }
-      .chart-container.active {
-        display: block;
+      .chart-section {
+        margin-bottom: 20px;
       }
-      /* Dark mode styles */
-      body.dark-mode {
-        background-color: #121212;
-        color: #ffffff;
-      }
-      nav.dark-mode,
-      .sidebar.dark-mode,
-      .content.dark-mode {
-        background-color: #1e1e1e;
-      }
-      .counter.dark-mode {
-        background-color: #cecece;
+      .collapse-btn {
+        background-color: #4caf50;
         color: #fff;
+        border: none;
+        padding: 10px;
+        width: 100%;
+        text-align: left;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        outline: none;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .chart-wrapper {
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+      .chart-wrapper.hidden {
+        max-height: 0;
       }
       .toggle-dark-mode {
         position: fixed;
@@ -73,28 +84,9 @@
       .toggle-dark-mode i {
         font-size: 24px;
       }
-      .cycle-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 10px;
-      }
-      .cycle-button {
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      .dark-mode .chartjs-legend-item {
-        color: white !important;
-      }
     </style>
   </head>
   <body>
-    <!-- Sidebar and Navbar -->
     <nav>
       <div class="logo">
         <i class="bx bx-menu menu-icon"></i>
@@ -137,12 +129,10 @@
         </div>
       </div>
     </nav>
-
     <section class="overlay"></section>
 
-    <!-- Dashboard Content -->
     <div class="content">
-      <h1>Admin Dashboard</h1>
+      <h1>BHW Dashboard</h1>
       <div class="counter-container">
         <div class="counter total-users">
           <h2>Total Users</h2>
@@ -154,54 +144,48 @@
         </div>
       </div>
 
-      <!-- Chart Containers -->
-      <div class="chart-container" id="chart1">
-        <canvas id="weightForAgeChart"></canvas>
+      <!-- Collapsible Chart Sections -->
+      <div class="chart-container">
+        {% for chart in [ {'id': 'weightForAgeChart', 'label': 'Weight for
+        Age'}, {'id': 'heightForAgeChart', 'label': 'Height for Age'}, {'id':
+        'weightForLengthChart', 'label': 'Weight for Length/Height'}, {'id':
+        'ageChart', 'label': 'Age Distribution'}, {'id': 'genderChart', 'label':
+        'Gender Distribution'} ] %}
+        <div class="chart-section">
+          <button class="collapse-btn">
+            {{ chart.label }}
+            <i class="bx bx-chevron-down"></i>
+          </button>
+          <div class="chart-wrapper">
+            <canvas id="{{ chart.id }}"></canvas>
+          </div>
+        </div>
+        {% endfor %}
       </div>
-      <div class="chart-container" id="chart2">
-        <canvas id="heightForAgeChart"></canvas>
-      </div>
-      <div class="chart-container" id="chart3">
-        <canvas id="weightForLengthChart"></canvas>
-      </div>
-      <div class="chart-container" id="chart4">
-        <canvas id="ageChart"></canvas>
-      </div>
-      <div class="chart-container" id="chart5">
-        <canvas id="genderChart"></canvas>
-      </div>
-
-      <!-- Cycle buttons for charts -->
-      <div class="cycle-buttons">
-        <button class="cycle-button" onclick="previousChart()">
-          Previous Chart
-        </button>
-        <button class="cycle-button" onclick="nextChart()">Next Chart</button>
-      </div>
-      <p id="chartDescription" style="text-align: center"></p>
     </div>
 
     <div class="toggle-dark-mode"><i class="bx bx-moon"></i></div>
 
-    <!-- Data and Chart Scripts -->
     <script>
+      // Data from Backend
       const malnutritionMetrics = {{ malnutrition_metrics | tojson }};
       const ageGroups = {{ age_groups | tojson }};
       const genderCounts = {{ gender_counts | tojson }};
-      const barangayData = {{ barangay_data | tojson }};
 
+      // Sidebar and Overlay Interactions
       const navBar = document.querySelector("nav"),
             menuBtns = document.querySelectorAll(".menu-icon"),
             overlay = document.querySelector(".overlay"),
             toggleDarkModeBtn = document.querySelector(".toggle-dark-mode"),
             toggleDarkModeIcon = toggleDarkModeBtn.querySelector("i");
 
-      menuBtns.forEach(menuBtn => {
+      menuBtns.forEach((menuBtn) => {
         menuBtn.addEventListener("click", () => navBar.classList.toggle("open"));
       });
 
       overlay.addEventListener("click", () => navBar.classList.remove("open"));
 
+      // Dark Mode Toggle
       function setDarkMode(isDark) {
         document.body.classList.toggle("dark-mode", isDark);
         navBar.classList.toggle("dark-mode", isDark);
@@ -217,57 +201,56 @@
 
       if (localStorage.getItem("darkMode") === "true") setDarkMode(true);
 
-      const orderedAgeLabels = ["0-5", "6-12", "13-18", "19-50", "50+"];
-      const orderedAgeData = orderedAgeLabels.map(label => ageGroups[label]);
-      const orderedGenderLabels = ["M", "F", "Other"];
-      const orderedGenderData = orderedGenderLabels.map(label => genderCounts[label]);
-
-      const charts = [
+      // Chart Configurations
+      const chartsConfig = [
         {
-          ctx: document.getElementById("weightForAgeChart").getContext("2d"),
-          config: {
-            type: "bar",
-            data: {
-              labels: ["Severely Underweight", "Underweight", "Normal", "Overweight"],
-              datasets: [{
+          id: "weightForAgeChart",
+          label: "Weight for Age",
+          type: "bar",
+          data: {
+            labels: ["Severely Underweight", "Underweight", "Normal", "Overweight"],
+            datasets: [
+              {
                 label: "Weight for Age",
                 backgroundColor: "#4caf50",
                 data: [
                   malnutritionMetrics["Weight for Age"]["Severely Underweight"] || 0,
                   malnutritionMetrics["Weight for Age"]["Underweight"] || 0,
                   malnutritionMetrics["Weight for Age"]["Normal"] || 0,
-                  malnutritionMetrics["Weight for Age"]["Overweight"] || 0
-                ]
-              }]
-            }
-          }
+                  malnutritionMetrics["Weight for Age"]["Overweight"] || 0,
+                ],
+              },
+            ],
+          },
         },
         {
-          ctx: document.getElementById("heightForAgeChart").getContext("2d"),
-          config: {
-            type: "bar",
-            data: {
-              labels: ["Severely Stunted", "Stunted", "Normal", "Tall"],
-              datasets: [{
+          id: "heightForAgeChart",
+          label: "Height for Age",
+          type: "bar",
+          data: {
+            labels: ["Severely Stunted", "Stunted", "Normal", "Tall"],
+            datasets: [
+              {
                 label: "Height for Age",
                 backgroundColor: "#2196f3",
                 data: [
                   malnutritionMetrics["Height for Age"]["Severely Stunted"] || 0,
                   malnutritionMetrics["Height for Age"]["Stunted"] || 0,
                   malnutritionMetrics["Height for Age"]["Normal"] || 0,
-                  malnutritionMetrics["Height for Age"]["Tall"] || 0
-                ]
-              }]
-            }
-          }
+                  malnutritionMetrics["Height for Age"]["Tall"] || 0,
+                ],
+              },
+            ],
+          },
         },
         {
-          ctx: document.getElementById("weightForLengthChart").getContext("2d"),
-          config: {
-            type: "bar",
-            data: {
-              labels: ["Severely Wasted", "Wasted", "Normal", "Overweight", "Obese"],
-              datasets: [{
+          id: "weightForLengthChart",
+          label: "Weight for Length/Height",
+          type: "bar",
+          data: {
+            labels: ["Severely Wasted", "Wasted", "Normal", "Overweight", "Obese"],
+            datasets: [
+              {
                 label: "Weight for Length/Height",
                 backgroundColor: "#ff5722",
                 data: [
@@ -275,68 +258,85 @@
                   malnutritionMetrics["Weight for Length/Height"]["Wasted"] || 0,
                   malnutritionMetrics["Weight for Length/Height"]["Normal"] || 0,
                   malnutritionMetrics["Weight for Length/Height"]["Overweight"] || 0,
-                  malnutritionMetrics["Weight for Length/Height"]["Obese"] || 0
-                ]
-              }]
-            }
-          }
+                  malnutritionMetrics["Weight for Length/Height"]["Obese"] || 0,
+                ],
+              },
+            ],
+          },
         },
         {
-          ctx: document.getElementById("ageChart").getContext("2d"),
-          config: {
-            type: "pie",
-            data: {
-              labels: orderedAgeLabels,
-              datasets: [{
-                data: orderedAgeData,
-                backgroundColor: ["#4caf50", "#ff9800", "#03a9f4", "#e91e63", "#9c27b0"]
-              }]
-            }
-          }
+          id: "ageChart",
+          label: "Age Distribution",
+          type: "bar",
+          data: {
+            labels: ["0-5", "6-12", "13-18", "19-50", "50+"],
+            datasets: [
+              {
+                label: "Age Groups",
+                backgroundColor: "#4caf50",
+                data: [
+                  ageGroups["0-5"],
+                  ageGroups["6-12"],
+                  ageGroups["13-18"],
+                  ageGroups["19-50"],
+                  ageGroups["50+"],
+                ],
+              },
+            ],
+          },
         },
         {
-          ctx: document.getElementById("genderChart").getContext("2d"),
-          config: {
-            type: "doughnut",
-            data: {
-              labels: orderedGenderLabels,
-              datasets: [{
-                data: orderedGenderData,
-                backgroundColor: ["#4caf50", "#e91e63", "#03a9f4"]
-              }]
-            }
-          }
+          id: "genderChart",
+          label: "Gender Distribution",
+          type: "pie",
+          data: {
+            labels: ["M", "F", "Other"],
+            datasets: [
+              {
+                label: "Gender",
+                backgroundColor: ["#4caf50", "#2196f3", "#ff5722"],
+                data: [genderCounts["M"], genderCounts["F"], genderCounts["Other"]],
+              },
+            ],
+          },
         },
       ];
 
-      let currentChart = 0;
-      const chartInstances = charts.map(({ ctx, config }) => new Chart(ctx, config));
-      const chartContainers = Array.from(document.getElementsByClassName("chart-container"));
+      // Chart Instances
+      let chartInstances = [];
 
-      function updateChartDisplay() {
-        chartContainers.forEach((el, i) => el.classList.toggle("active", i === currentChart));
-        const chartDescriptions = [
-          "Weight for Age Metrics",
-          "Height for Age Metrics",
-          "Weight for Length/Height Metrics",
-          "Age Distribution",
-          "Gender Distribution",
-          "Barangay Prediction Totals"
-        ];
-        document.getElementById("chartDescription").textContent = chartDescriptions[currentChart];
+      function initializeCharts() {
+        chartInstances.forEach((chart) => chart.destroy()); // Destroy existing charts to avoid duplication
+        chartInstances = chartsConfig.map(({ id, type, data }) => {
+          const ctx = document.getElementById(id).getContext("2d");
+          return new Chart(ctx, { type, data });
+        });
       }
 
-      function nextChart() {
-        currentChart = (currentChart + 1) % charts.length;
-        updateChartDisplay();
-      }
+      initializeCharts();
 
-      function previousChart() {
-        currentChart = (currentChart - 1 + charts.length) % charts.length;
-        updateChartDisplay();
-      }
+      // Collapsible Functionality
+      const collapseBtns = document.querySelectorAll(".collapse-btn");
+      const chartWrappers = document.querySelectorAll(".chart-wrapper");
 
-      updateChartDisplay();
+      collapseBtns.forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          const chartWrapper = chartWrappers[index];
+          const isCollapsed = chartWrapper.classList.toggle("hidden");
+          btn.innerHTML = `
+            <span>${chartsConfig[index].label}</span>
+            <i class='bx ${isCollapsed ? "bx-chevron-down" : "bx-chevron-up"}'></i>
+          `;
+        });
+      });
+
+      // Resize Event Listener
+      window.addEventListener("resize", () => {
+        initializeCharts(); // Reinitialize charts on window resize
+      });
+
+      // Expand All Charts Initially
+      chartWrappers.forEach((wrapper) => wrapper.classList.remove("hidden"));
     </script>
   </body>
 </html>

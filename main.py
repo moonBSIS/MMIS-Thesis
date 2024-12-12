@@ -20,6 +20,7 @@ app = Flask(__name__, static_folder='static')
 
 app.config['SECRET_KEY'] = '4046bde895cc19ca9cbd373a'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:1234@localhost/malnutritiondb3'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['UPLOAD_FOLDER'] = 'static/images'
@@ -263,7 +264,7 @@ class PredictionForm(FlaskForm):
 
 class NewUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(max=50)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=50)])
+    password = StringField('Password', validators=[DataRequired(), Length(min=6, max=50)])
     barangay = StringField('Barangay', render_kw={'readonly': True})  
     submit = SubmitField('Add User')
   
@@ -287,7 +288,7 @@ class Admin(db.Model):
 # BHW Admin Form with dynamic barangay choices
 class CreateAdminForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()])
     barangay = SelectField('Primary Barangay', validators=[DataRequired()], choices=[
         ('Aganan', 'Aganan'), ('Amparo', 'Amparo'), ('Anilao', 'Anilao'), ('Balabag', 'Balabag'),
         ('Cabugao Norte', 'Cabugao Norte'), ('Cabugao Sur', 'Cabugao Sur'), ('Jibao-an', 'Jibao-an'),
@@ -301,7 +302,7 @@ class CreateAdminForm(FlaskForm):
 # Update BHW 
 class UpdateBHWForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password (Leave blank to keep current password)', validators=[Optional()])
+    password = StringField('Password (Leave blank to keep current password)', validators=[Optional()])
     barangay = SelectField('Barangay', choices=[], validators=[DataRequired()])
     submit = SubmitField('Update BHW')
 
@@ -323,11 +324,11 @@ class CreateRCHUForm(FlaskForm):
         DataRequired(),
         Length(min=4, max=25)
     ])
-    password = PasswordField('Password', validators=[
+    password = StringField('Password', validators=[
         DataRequired(),
         Length(min=6)
     ])
-    confirm_password = PasswordField('Confirm Password', validators=[
+    confirm_password = StringField('Confirm Password', validators=[
         DataRequired(),
         EqualTo('password', message='Passwords must match')
     ])
@@ -340,8 +341,8 @@ class CreateRCHUForm(FlaskForm):
 
 class UpdateRCHUForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=25)])
-    password = PasswordField('New Password', validators=[Length(min=6, message="Optional")])
-    confirm_password = PasswordField('Confirm Password', validators=[EqualTo('password', message='Passwords must match')])
+    password = StringField('New Password', validators=[Length(min=6, message="Optional")])
+    confirm_password = StringField('Confirm Password', validators=[EqualTo('password', message='Passwords must match')])
     submit = SubmitField('Update RCHU')
 
     def validate_username(self, username):
@@ -1984,7 +1985,7 @@ def adminDashboard():
         gender_counts[gender] += 1
 
     return render_template(
-        'admin/testDashboard.html',
+        'admin/dashboard.html',
         total_users=total_users,
         total_children=total_children,
         malnutrition_metrics=malnutrition_metrics,

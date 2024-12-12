@@ -169,7 +169,10 @@
         </div>
         <div class="form-group">
           {{ form.confirm_password.label }}<br />
-          {{ form.confirm_password(class_="form-control") }}
+          {{ form.confirm_password(class_="form-control") }} {% for error in
+          form.confirm_password.errors %}
+          <small class="form-error">{{ error }}</small>
+          {% endfor %}
         </div>
         <div class="form-group">
           <button type="submit" class="btn btn-primary dark-mode-toggle">
