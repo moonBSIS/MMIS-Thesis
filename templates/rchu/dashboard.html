@@ -6,90 +6,13 @@
     <title>RCHU Dashboard</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/home2.css') }}"
+      href="{{ url_for('static', filename='css/rhudashboard.css') }}"
     />
     <link
       href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-      .content {
-        text-align: center;
-      }
-      .content h1 {
-        margin-bottom: 20px;
-      }
-      .counter-container {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 20px;
-      }
-      .counter {
-        width: 23%;
-        padding: 20px;
-        border-radius: 8px;
-        background-color: #cecece;
-        text-align: center;
-        margin: 10px;
-      }
-      .total-users {
-        background-color: #4caf50;
-        color: #fff;
-      }
-      .chart-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-        margin: 20px auto;
-        width: 90%;
-      }
-
-      .toggle-dark-mode {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #4caf50;
-        color: #ffffff;
-        border-radius: 50%;
-        padding: 10px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-      .toggle-dark-mode i {
-        font-size: 24px;
-      }
-      .chart-section {
-        margin-bottom: 20px;
-      }
-      .collapse-btn {
-        background-color: #4caf50;
-        color: #fff;
-        border: none;
-        padding: 10px;
-        width: 100%;
-        text-align: left;
-        font-size: 16px;
-        cursor: pointer;
-        border-radius: 5px;
-        outline: none;
-        margin-bottom: 5px;
-        display: flex;
-        justify-content: space-between; /* Ensures space between text and arrow */
-        align-items: center; /* Vertically centers text and icon */
-      }
-      .chart-wrapper {
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-      }
-      .chart-wrapper.hidden {
-        max-height: 0;
-        overflow: hidden;
-      }
-    </style>
   </head>
   <body>
     <nav>
@@ -337,7 +260,7 @@
       let chartInstances = [];
 
       function initializeCharts() {
-        chartInstances.forEach((chart) => chart.destroy()); // Destroy existing charts to avoid duplication
+        chartInstances.forEach((chart) => chart.destroy());
         chartInstances = chartsConfig.map(({ id, type, data }) => {
           const ctx = document.getElementById(id).getContext("2d");
           return new Chart(ctx, { type, data });
@@ -369,7 +292,7 @@
 
       // Resize Event Listener
       window.addEventListener("resize", () => {
-        initializeCharts(); // Reinitialize charts on window resize
+        initializeCharts();
       });
 
       // Expand All Charts Initially
