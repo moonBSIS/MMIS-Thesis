@@ -12,6 +12,7 @@ body {
   min-height: 100%;
   background: white;
   padding-top: 70px;
+  overflow-x: hidden;
 }
 
 /* Navbar Styles */
@@ -46,6 +47,10 @@ nav .logo {
   color: #333;
   font-size: 15px;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 370px;
 }
 
 nav .sidebar {
@@ -128,9 +133,9 @@ nav.open ~ .overlay {
 /* Content */
 .content {
   text-align: center;
-  width: 80%;
+  width: 95%;
   margin: 20px auto;
-  padding: 20px;
+  padding: 10px;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -138,6 +143,7 @@ nav.open ~ .overlay {
 
 .content h1 {
   margin-bottom: 20px;
+  font-size: calc(1.5rem + 1vw);
 }
 
 /* Counters */
@@ -180,12 +186,12 @@ nav.open ~ .overlay {
 
 .toggle-dark-mode {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 70px;
+  right: 15px;
   background-color: #4caf50;
   color: #ffffff;
   border-radius: 50%;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -213,10 +219,10 @@ body.dark-mode .toggle-dark-mode:hover {
   background-color: #4caf50;
   color: #fff;
   border: none;
-  padding: 10px;
+  padding: 12px 15px;
   width: 100%;
   text-align: left;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
   border-radius: 5px;
   outline: none;
@@ -233,8 +239,8 @@ body.dark-mode .toggle-dark-mode:hover {
 }
 
 .chart-wrapper canvas {
-  max-width: 100%;
-  height: auto;
+  max-width: 100% !important;
+  height: auto !important;
 }
 
 .chart-wrapper.hidden {
@@ -268,6 +274,16 @@ nav.dark-mode .sidebar {
 }
 
 /* Responsive Styles */
+@media (max-width: 1024px) {
+  .chart-container {
+    grid-template-columns: 1fr;
+    width: 95%;
+  }
+  .logo .logo-name {
+    max-width: 180px;
+  }
+}
+
 @media (max-width: 768px) {
   .chart-container {
     grid-template-columns: 1fr;
@@ -285,11 +301,45 @@ nav.dark-mode .sidebar {
   }
 
   .counter h2 {
-    font-size: 1rem;
+    font-size: calc(0.8rem + 0.5vw);
   }
 
   .counter p {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .logo .logo-name {
+    max-width: 150px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  nav .sidebar {
+    width: 100%;
+  }
+
+  nav.open ~ .overlay {
+    left: 100%;
+  }
+
+  .counter {
+    padding: 15px;
+    margin: 5px;
+  }
+
+  .content {
+    width: 98%;
+    padding: 5px;
+  }
+
+  .logo .logo-name {
+    display: none;
+  }
+  .logo .lognameM {
+    display: inline-block;
+    font-size: 14px;
   }
 }
 
@@ -313,4 +363,9 @@ nav.dark-mode .sidebar {
   .counter p {
     font-size: 0.8rem;
   }
+}
+
+/* Ensure abbreviation is hidden by default */
+.logo .lognameM {
+  display: none;
 }
