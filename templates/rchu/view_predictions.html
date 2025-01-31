@@ -6,7 +6,7 @@
     <title>View Predictions</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/home2.css') }}"
+      href="{{ url_for('static', filename='css/view_predictions.css') }}"
     />
     <link
       href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
@@ -219,41 +219,44 @@
         placeholder="Search by Barangay, Child's Name, Age, Prediction Result, or Sex..."
       />
 
-      <!-- Predictions Table -->
-      <table>
-        <thead>
-          <tr>
-            <th>Barangay</th>
-            <th>Child's Name</th>
-            <th>Age (months)</th>
-            <th>Sex</th>
-            <th>Prediction Result</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="predictionsTableBody">
-          {% for prediction in predictions %}
-          <tr class="prediction-row">
-            <td class="barangay">{{ prediction.barangay_name }}</td>
-            <td class="name">
-              {{ prediction.child_first_name }} {{ prediction.child_last_name }}
-            </td>
-            <td class="age">{{ prediction.age }}</td>
-            <td class="sex">{{ prediction.sex }}</td>
-            <td class="result">{{ prediction.prediction_result|safe }}</td>
-            <td>
-              <div class="action-buttons">
-                <a
-                  href="{{ url_for('rchuViewPrediction', prediction_id=prediction.id) }}"
-                  class="btn btn-view"
-                  >View</a
-                >
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <!-- Updated Table Container -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Barangay</th>
+              <th>Child's Name</th>
+              <th>Age (months)</th>
+              <th>Sex</th>
+              <th>Prediction Result</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="predictionsTableBody">
+            {% for prediction in predictions %}
+            <tr class="prediction-row">
+              <td class="barangay">{{ prediction.barangay_name }}</td>
+              <td class="name">
+                {{ prediction.child_first_name }} {{ prediction.child_last_name
+                }}
+              </td>
+              <td class="age">{{ prediction.age }}</td>
+              <td class="sex">{{ prediction.sex }}</td>
+              <td class="result">{{ prediction.prediction_result|safe }}</td>
+              <td>
+                <div class="action-buttons">
+                  <a
+                    href="{{ url_for('rchuViewPrediction', prediction_id=prediction.id) }}"
+                    class="btn btn-view"
+                    >View</a
+                  >
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="toggle-dark-mode"><i class="bx bx-moon"></i></div>
